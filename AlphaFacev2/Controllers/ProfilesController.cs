@@ -148,5 +148,63 @@ namespace AlphaFacev2.Controllers
         {
             return _context.Profile.Any(e => e.Id == id);
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            var dummyProfile = new Profile
+            {
+                FirstName = "Vlad",
+                LastName = "Deac",
+                DateOfBirth = DateTime.Now,
+                Gender = "male",
+                Email = "vlad@vlad.com",
+                Password = "password",
+                UserName = "vladd"
+            };
+            return View(dummyProfile);
+        }
+
+        // POST: Profiles/RegisterAsync
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterAsync([Bind("FirstName,LastName,DateOfBirth,Gender,Email,UserName, Password")] Profile profile)
+        {
+            if (ModelState.IsValid)
+            {
+                // add IP address and shit in here then uncomment
+                // _context.Add(profile);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(profile);
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            var dummyLoginProfile = new Profile
+            {
+                UserName = "vladd",
+                Password = "password"
+            };
+            return View(dummyLoginProfile);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile profile)
+        {
+            if (ModelState.IsValid)
+            {
+                // add login logic here
+                // _context.Add(profile);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(profile);
+        }
     }
 }
