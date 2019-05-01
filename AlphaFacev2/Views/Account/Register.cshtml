@@ -1,4 +1,4 @@
-﻿@model AlphaFacev2.Models.User
+﻿@model AlphaFacev2.Models.Profile
 
 @{
     ViewBag.Title = "Register";
@@ -6,14 +6,16 @@
 
 <h1>Register</h1>
 
+
+
 <div class="form-horizontal">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-controller="Account" asp-action="RegisterAsync" method="post">
-            <h4>Create a new account.</h4>
+            <h4>Create a new account</h4>
             <hr />
             @if (ViewBag.Message != null)
             {
-                <div class="form-group">
+                <div class="form-control">
                     <div class="col-md-10">@ViewBag.Message</div>
                 </div>
             }
@@ -22,24 +24,26 @@
             <div class="form-group">
                 <label asp-for="FirstName"></label>
                 <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LastName"></label>
                 <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DateOfBirth"></label>
                 <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Gender"></label>
-                @*<div>
-                        <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Gender>()">
-                            <option selected="selected" value="">Please select an option</option>
-                        </select>
-                        <span asp-validation-for="Gender" class="text-danger" />
-                    </div>*@
-                <input asp-for="Gender" class="form-control" />
+                <div>
+                    <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Genders>()">
+                        <option selected="selected" value="">Please select an option</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Email"></label>
@@ -56,7 +60,7 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" value="Register" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">Register</button>
         </form>
     </div>
 </div>
@@ -64,3 +68,50 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+@*<div class="form-horizontal">
+        <form asp-controller="Account" asp-action="RegisterAsync" method="post">
+            <div class="form-group">
+                <label asp-for="FirstName" class="col-md-2 control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender"></label>
+                <div>
+                    <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Genders>()">
+                        <option selected="selected" value="">Please select an option</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-default">Register</button>
+            </div>
+        </form>
+    </div>*@
