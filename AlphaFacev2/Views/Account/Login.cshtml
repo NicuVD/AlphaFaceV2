@@ -1,0 +1,58 @@
+﻿@model AlphaFacev2.Models.User
+@{
+    ViewBag.Title = "Login";
+}
+
+<h1>Login</h1>
+
+<div class="row">
+    <div class="col-md-5">
+        <section>
+            <form asp-controller="Account" asp-action="Login" method="post">
+                <h4 style="line-height:60px">Use a local account to log in</h4>
+                <hr />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </div>
+                <div class="form-group">
+                    @*<p>
+                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                    </p>*@
+                    <p>
+                        <a asp-controller="Account" asp-action="Register">Register as a new user</a>
+                    </p>
+                </div>
+            </form>
+        </section>
+    </div>
+    <div class="col-md-5 col-md-offset-2">
+        <section>
+            <h4 style="height:60px">Login with our Face Authentication service AFace</h4>
+            <hr />
+            <form method="post" enctype="multipart/form-data" asp-controller="FacesApi" asp-action="ExtractFaceMetrics">
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <p>Upload your picture using this form:</p>
+                        <input type="file" name="file" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="submit" value="Upload" />
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
