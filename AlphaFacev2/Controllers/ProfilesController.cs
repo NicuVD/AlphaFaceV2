@@ -26,10 +26,10 @@ namespace AlphaFacev2.Controllers
         }
 
         // GET: Profiles/Details/5
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> Details(int? id)
         {
-            var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
-            var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+            //History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
+            var user = _context.Profile.FirstOrDefault(p => p.Id == id);
 
             if (user == null)
             {
