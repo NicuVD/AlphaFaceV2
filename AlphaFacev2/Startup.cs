@@ -37,7 +37,6 @@ namespace AlphaFacev2
             services.AddTransient<IFeedbackRepository, FeedbackRepository>();
 
             services.AddScoped<CognitiveServices>();
-            services.AddScoped<AccountServices>();
 
             services.AddMvc();
 

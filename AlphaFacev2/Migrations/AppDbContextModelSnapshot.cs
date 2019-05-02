@@ -65,7 +65,9 @@ namespace AlphaFacev2.Migrations
 
                     b.Property<string>("IpAddress");
 
-                    b.Property<bool>("IsLoginSuccess");
+                    b.Property<bool>("IsActionSuccess");
+
+                    b.Property<bool>("IsUserLoggedIn");
 
                     b.Property<DateTime>("LoginTime");
 
@@ -78,27 +80,51 @@ namespace AlphaFacev2.Migrations
                     b.ToTable("History");
                 });
 
+            modelBuilder.Entity("AlphaFacev2.Models.ImageStore", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreateDate");
+
+                    b.Property<string>("ImageBase64String");
+
+                    b.Property<int>("ProfileId");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("ImageStore");
+                });
+
             modelBuilder.Entity("AlphaFacev2.Models.Profile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("DateOfBirth");
+                    b.Property<DateTime?>("DateOfBirth")
+                        .IsRequired();
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
-                    b.Property<string>("Gender");
+                    b.Property<string>("Gender")
+                        .IsRequired();
 
                     b.Property<string>("IpAdress");
 
                     b.Property<bool>("IsLoggedIn");
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired();
 
-                    b.Property<string>("Password");
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<byte[]>("ProfileImage");
 

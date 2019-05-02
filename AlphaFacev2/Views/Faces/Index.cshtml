@@ -1,53 +1,116 @@
-﻿@model IEnumerable<AlphaFacev2.Models.Face>
+﻿@using AlphaFacev2.Models
+
+@model IEnumerable<AlphaFacev2.Models.Face>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h4>AFace comparison</h4>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProfileId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Accuracy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FaceGuid)
-            </th>
-            <th></th>
+        <tr style="text-align:center">
+            <th>Profile picture</th>
+            <th>Comparison picture</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
         <tr>
+            @*<td>
+                @{
+                    var base64 = Convert.ToBase64String(user.ProfileImage);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                    }
+                    <img src="@imgSrc" alt="Profile Picture" height="100" />
+            </td>*@
             <td>
-                @Html.DisplayFor(modelItem => item.ProfileId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Accuracy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FaceGuid)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @*Display captured image here*@
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="results"></div>
+                        </div>
+                    </div>
+                </div>
             </td>
         </tr>
-}
+        <tr>
+            <td>
+                <section>
+                    <h6 style="text-align:center;font-size:small">Upload a picture from your computer</h6>
+                    <hr />
+                    <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="PostProfilePicture">
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="file" name="file"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="submit" value="Upload" class="btn btn-primary"/>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </td>
+            <td>
+                <section>
+                    <h6 style="text-align:center;font-size:small">Take a picture using your webcam</h6>
+                    <hr />
+                    <div class="col-md-6" >
+                        <div class="panel panel-default">
+                            <div class="panel-body" >
+                                <div id="my_camera"></div>
+                                <!-- A button for taking snaps -->
+                                <form>
+                                    <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">    </div>
+                    <!-- First, include the Webcam.js JavaScript Library -->
+                    <script src="~/webcamjs/webcam.js"></script>
+                    <!-- Configure a few settings and attach camera -->
+                    <script language="JavaScript">
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpeg',
+                            jpeg_quality: 90
+                        });
+                        Webcam.attach('#my_camera');
+                    </script>
+
+                    <!-- Code to handle taking the snapshot and displaying it locally -->
+                    <script language="JavaScript">
+                        function take_snapshot() {
+                            // take snapshot and get image data
+                            Webcam.snap(function (data_uri) {
+                                // display results in page
+                                document.getElementById('results').innerHTML =
+                                    '<img src="' +
+                                    data_uri +
+                                    '"/>';
+
+                                Webcam.upload(data_uri,
+                                    '/Camera/Capture',
+                                    function (code, text) {
+                                        alert('Photo Captured');
+                                    });
+                            });
+                        }
+                    </script>
+                </section>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="border:solid;border-color:dodgerblue;border-radius:10px">
+                <h5 style="text-align:center">Comparison results</h5>
+                <hr />
+                <h5 style="text-align:center">Results go here...</h5>
+            </td>
+        </tr>
     </tbody>
 </table>
