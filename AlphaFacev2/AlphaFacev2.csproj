@@ -5,6 +5,27 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20190430155029_InitialCreate.cs" />
+    <Compile Remove="Migrations\20190430155029_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190430180510_UpdatedModels.cs" />
+    <Compile Remove="Migrations\20190430180510_UpdatedModels.Designer.cs" />
+    <Compile Remove="Migrations\20190501073927_AddedAuthentication.cs" />
+    <Compile Remove="Migrations\20190501073927_AddedAuthentication.Designer.cs" />
+    <Compile Remove="Migrations\20190501201558_AddedWebcam.cs" />
+    <Compile Remove="Migrations\20190501201558_AddedWebcam.Designer.cs" />
+    <Compile Remove="Migrations\20190502111816_UpdatedAuthenticationWithProfile.cs" />
+    <Compile Remove="Migrations\20190502111816_UpdatedAuthenticationWithProfile.Designer.cs" />
+    <Compile Remove="Migrations\20190502120222_IsUserLoggedInColumnInHistory.cs" />
+    <Compile Remove="Migrations\20190502120222_IsUserLoggedInColumnInHistory.Designer.cs" />
+    <Compile Remove="Migrations\20190502123421_UpdatedHistory.cs" />
+    <Compile Remove="Migrations\20190502123421_UpdatedHistory.Designer.cs" />
+    <Compile Remove="Migrations\20190502162244_UpdatedDb.cs" />
+    <Compile Remove="Migrations\20190502162244_UpdatedDb.Designer.cs" />
+    <Compile Remove="Migrations\20190502174557_UpdatedProfile.cs" />
+    <Compile Remove="Migrations\20190502174557_UpdatedProfile.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

@@ -20,13 +20,18 @@ namespace AlphaFacev2.Controllers
 
         public IActionResult Index()
         {
-            var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
-            var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+            History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
 
-            if (user.IsLoggedIn == true)
+            if ( lastLogin != null)
             {
-                HttpContext.Session.SetString("UserID", user.Id.ToString());
-                HttpContext.Session.SetString("UserName", user.UserName);
+                lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
+                var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+
+                if (user.IsLoggedIn == true)
+                {
+                    HttpContext.Session.SetString("UserID", user.Id.ToString());
+                    HttpContext.Session.SetString("UserName", user.UserName);
+                }
             }
 
             return View();

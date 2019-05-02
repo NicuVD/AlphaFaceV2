@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlphaFacev2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190430155029_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20190502174841_UpdatedModels")]
+    partial class UpdatedModels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,17 +67,36 @@ namespace AlphaFacev2.Migrations
 
                     b.Property<string>("IpAddress");
 
-                    b.Property<DateTime>("IsLoginSuccess");
+                    b.Property<bool>("IsActionSuccess");
+
+                    b.Property<bool>("IsUserLoggedIn");
 
                     b.Property<DateTime>("LoginTime");
 
-                    b.Property<int>("Password");
+                    b.Property<string>("Password");
 
-                    b.Property<int>("Username");
+                    b.Property<string>("Username");
 
                     b.HasKey("Id");
 
                     b.ToTable("History");
+                });
+
+            modelBuilder.Entity("AlphaFacev2.Models.ImageStore", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreateDate");
+
+                    b.Property<string>("ImageBase64String");
+
+                    b.Property<int>("ProfileId");
+
+                    b.HasKey("ImageId");
+
+                    b.ToTable("ImageStore");
                 });
 
             modelBuilder.Entity("AlphaFacev2.Models.Profile", b =>
@@ -86,17 +105,28 @@ namespace AlphaFacev2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("DateOfBirth");
+                    b.Property<DateTime?>("DateOfBirth")
+                        .IsRequired();
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
-                    b.Property<string>("Gender");
+                    b.Property<string>("Gender")
+                        .IsRequired();
 
                     b.Property<string>("IpAdress");
 
-                    b.Property<string>("LastName");
+                    b.Property<bool>("IsLoggedIn");
+
+                    b.Property<string>("LastName")
+                        .IsRequired();
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<byte[]>("ProfileImage");
 
