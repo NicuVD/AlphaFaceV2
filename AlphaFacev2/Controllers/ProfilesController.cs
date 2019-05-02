@@ -149,6 +149,7 @@ namespace AlphaFacev2.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+
             //var dummyProfile = new Profile
             //{
             //    FirstName = "Vlad",
@@ -160,6 +161,7 @@ namespace AlphaFacev2.Controllers
             //    UserName = "vladd"
             //};
             return View();
+
         }
 
         // POST: Profiles/RegisterAsync
@@ -167,6 +169,7 @@ namespace AlphaFacev2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> RegisterAsync([Bind("FirstName,LastName,DateOfBirth,Gender,Email,Password")] Profile user)
         {
             if (ModelState.IsValid)
@@ -198,11 +201,13 @@ namespace AlphaFacev2.Controllers
 
             // return View(); ???
             return View(user);
+
         }
 
         [HttpGet]
         public IActionResult Login()
         {
+
             //var dummyLoginProfile = new Profile
             //{
             //    UserName = "vladd",
@@ -210,10 +215,12 @@ namespace AlphaFacev2.Controllers
             //};
             //return View(dummyLoginProfile);
             return View();
+
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile user)
         {
             var loginTime = DateTime.Now;
@@ -337,5 +344,18 @@ namespace AlphaFacev2.Controllers
         //        }
         //    }
         //}
+
+        //public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile profile)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // add login logic here
+        //        // _context.Add(profile);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(profile);
+        //}
+
     }
 }
