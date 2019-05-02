@@ -5,7 +5,7 @@ namespace AlphaFacev2.Models
 {
     public class Profile
     {
-        [Key]
+        //[Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "First Name is required.")]
@@ -28,13 +28,7 @@ namespace AlphaFacev2.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        //public string UserName { get; set; }
-        public string UserName
-        {
-            get { return UserName; }
-            set { UserName = Email; }
-        }
-
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Date of birth is required.")]
         [Display(Name = "Birth Date")]
@@ -56,10 +50,10 @@ namespace AlphaFacev2.Models
         [Display(Name = "Password")]
         public string Password { get; set; } // added
 
-        [Compare("Password", ErrorMessage = "Passwords do not match.")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        public string ConfirmPassword { get; set; }
+        //[Compare("Password", ErrorMessage = "Passwords do not match.")]
+        //[DataType(DataType.Password)]
+        //[Display(Name = "Confirm password")]
+        //public string ConfirmPassword { get; set; }
     }
 
     public enum Genders

@@ -21,25 +21,26 @@ namespace AlphaFacev2.Controllers
         const string uriBase = "https://northeurope.api.cognitive.microsoft.com/face/v1.0/detect";
         private readonly AppDbContext _context;
         private readonly CognitiveServices _cognitiveServices;
-        private readonly AccountServices _accountService;
         //private readonly UserManager<IdentityUser> _userManager;
 
         [TempData]
         public string StatusMessage { get; set; }
 
-        public FacesController(AppDbContext context, CognitiveServices cognitiveServices, AccountServices accountService)
+        public FacesController(AppDbContext context, CognitiveServices cognitiveServices)
         {
             _context = context;
             _cognitiveServices = cognitiveServices;
-            _accountService = accountService;
         }
 
-        //public FacesController(AppDbContext context, UserManager<IdentityUser> userManager, CognitiveServices congnitiveServices)
-        //{
-        //    _userManager = userManager;
-        //    _cognitiveServices = congnitiveServices;
-        //    _context = context;
-        //}
+        public IActionResult Face()
+        {
+            return View();
+        }
+
+        public IActionResult Compare()
+        {
+            return View();
+        }
 
         // GET: Faces
 
@@ -175,7 +176,9 @@ namespace AlphaFacev2.Controllers
 
         public async Task<IActionResult> PostProfilePicture(IFormFile file)
         {
-            var user = _accountService.GetCurrentUser();
+            var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
+            var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+
             //var user = await _userManager.GetUserAsync(User);
             // Added for reading the file as byte array an updating the database
             byte[] imageByteArray = await GetUploadedPicture(file);
@@ -205,20 +208,30 @@ namespace AlphaFacev2.Controllers
 
         public async Task<IActionResult> CompareProfilePictures(IFormFile file)
         {
-            var user = _accountService.GetCurrentUser();
-            //var user = await _userManager.GetUserAsync(User);
-            var userProfile = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName);
+            var lastLogin = _context.History.Last(l => l.IsUserLoggedIn == true);
 
-            byte[] userImageByteArray = userProfile.ProfileImage;
+            if (lastLogin != null)
+            {
+                var userProfile = await _context.Profile.FirstOrDefaultAsync(p => p.UserName == lastLogin.Username);
+                byte[] userImageByteArray = new byte[] { 0 };
 
-            byte[] uploadedImageByteArray = await GetUploadedPicture(file);
+                if (userProfile.ProfileImage != null)
+                {
+                    userImageByteArray = userProfile.ProfileImage;
+                }
+                // return with message "No profile picture stored for this user."
 
-            Stream userImage = new MemoryStream(userImageByteArray);
-            Stream uploadedImage = new MemoryStream(uploadedImageByteArray);
+                byte[] uploadedImageByteArray = await GetUploadedPicture(file);
 
-            var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
+                Stream userImage = new MemoryStream(userImageByteArray);
+                Stream uploadedImage = new MemoryStream(uploadedImageByteArray);
 
-            return RedirectToAction("Index", "Faces");
+                var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
+
+                return View("Compare", result);
+            }
+
+            return RedirectToAction("Compare", "Faces");
         }
 
 

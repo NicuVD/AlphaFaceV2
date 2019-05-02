@@ -1,4 +1,6 @@
-﻿@model IEnumerable<AlphaFacev2.Models.Face>
+﻿@using AlphaFacev2.Models
+
+@model IEnumerable<AlphaFacev2.Models.Face>
 
 @{
     ViewData["Title"] = "Index";
@@ -15,13 +17,13 @@
     </thead>
     <tbody>
         <tr>
-            <td>
-                @*@{
-                        var base64 = Convert.ToBase64String();
-                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+            @*<td>
+                @{
+                    var base64 = Convert.ToBase64String(user.ProfileImage);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
                     }
-                    <img src="@imgSrc" alt="Profile Picture" height="100" />*@
-            </td>
+                    <img src="@imgSrc" alt="Profile Picture" height="100" />
+            </td>*@
             <td>
                 @*Display captured image here*@
                 <div class="col-md-4">
@@ -112,57 +114,3 @@
         </tr>
     </tbody>
 </table>
-
-
-
-
-
-
-
-
-
-@*<p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProfileId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Accuracy)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Gender)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FaceGuid)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProfileId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Accuracy)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gender)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FaceGuid)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>*@

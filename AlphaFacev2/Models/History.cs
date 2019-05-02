@@ -8,7 +8,8 @@ namespace AlphaFacev2.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public DateTime LoginTime { get; set; }
-        public bool IsLoginSuccess { get; set; }
+        public bool IsActionSuccess { get; set; }
+        public bool IsUserLoggedIn { get; set; }
         public string IpAddress { get; set; }
     }
 }
