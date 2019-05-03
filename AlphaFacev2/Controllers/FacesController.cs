@@ -244,6 +244,22 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("Compare", "Faces");
         }
 
+        public async Task<IActionResult> ComparePictures(IList<IFormFile> files)
+        {
+            var firstFile = files.First();
+            var secondFile = files.Last();
+
+            byte[] firstUploadedImageByteArray = await GetUploadedPicture(firstFile);
+            byte[] secondUploadedImageByteArray = await GetUploadedPicture(secondFile);
+
+            Stream firstImage = new MemoryStream(firstUploadedImageByteArray);
+            Stream secondImage = new MemoryStream(secondUploadedImageByteArray);
+
+            var result = await _cognitiveServices.VerifyAsync(firstImage, secondImage);
+
+            return View("ComparisonResults", result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> ExtractFaceMetrics(IFormFile file)
         {

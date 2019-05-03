@@ -5,7 +5,113 @@
     ViewData["Title"] = "Index";
 }
 
-<table class="table">
+    <div>
+        <form asp-controller="Faces" asp-action="ComparePictures" style="text-align:center">
+            <input type="submit" class="btn btn-primary btn-warning" value="Compare pictures" style="width:300px; height:60px; font-size:larger;">
+            <hr />
+            <div class="column" style="text-align:left;max-width:360px">
+                <div class="col-md-10" style="height: 280px">
+                    <h6>Profile picture</h6>
+                    @{
+                        var user = accountServices.GetCurrentUser();
+                        string imgSrc = "";
+
+                        if (user.IsLoggedIn == true)
+                        {
+                            var base64 = Convert.ToBase64String(user.ProfileImage);
+                            imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                        }
+                    }
+                    <img src="@imgSrc" alt="Profile Picture" height="240" />
+                </div>
+                <br />
+                <div class="col-md-10" style="height:400px">
+                    <h6>Picture to compare</h6>
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div id="results"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="column">
+            <div class="col-md-10" style="text-align:center; height: 360px">
+                <section>
+                    <h6 style="text-align:center">Take a picture using your webcam</h6>
+                    <div>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div id="my_camera"></div>
+                                <!-- A button for taking snaps -->
+                                <div>
+                                    <br />
+                                    <form>
+                                        <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="col-md-2">    </div>
+                    <!-- First, include the Webcam.js JavaScript Library -->
+                    <script src="~/webcamjs/webcam.js"></script>
+                    <!-- Configure a few settings and attach camera -->
+                    <script language="JavaScript">
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpg', // changed from jpeg
+                            jpeg_quality: 90
+                        });
+                        Webcam.attach('#my_camera');
+                    </script>
+
+                    <!-- Code to handle taking the snapshot and displaying it locally -->
+                    <script language="JavaScript">
+                        function take_snapshot() {
+                            // take snapshot and get image data
+                            Webcam.snap(function (data_uri) {
+                                // display results in page
+                                document.getElementById('results').innerHTML =
+                                    '<img src="' +
+                                    data_uri +
+                                    '"/>';
+
+                                Webcam.upload(data_uri,
+                                    '/Camera/Capture',
+                                    function (code, text) {
+                                        alert('Photo Captured');
+                                    });
+                            });
+                        }
+                    </script>
+                </section>
+            </div>
+            <div class="col-md-10" style="text-align:center; height: 280px">
+                <section>
+                    <h6 style="text-align:center;">Upload a picture from your computer</h6>
+                    <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="UploadImage">
+                        <div class="form-group">
+                            <div>
+                                <input type="file" name="file" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <input type="submit" value="Upload" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+@*<table class="table">
     <thead>
         <tr style="text-align:center">
             <th>Profile picture</th>
@@ -28,7 +134,7 @@
                 <img src="@imgSrc" alt="Profile Picture" height="240" />
             </td>
             <td class="col-md-10" style="text-align:center">
-                @*Display captured image here*@
+                @*Display captured image here
                 <div class="col-md-10">
                     <div class="panel panel-default">
                         <div class="panel-body">
@@ -40,7 +146,7 @@
         </tr>
         <tr>
             <td class="col-md-10" style="text-align:center">
-                <section >
+                <section>
                     <h6 style="text-align:center;font-size:small">Upload a picture from your computer</h6>
                     <hr />
                     <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="UploadImage">
@@ -58,7 +164,7 @@
                 </section>
             </td>
             <td class="col-md-10" style="text-align:center">
-                <section >
+                <section>
                     <h6 style="text-align:center;font-size:small">Take a picture using your webcam</h6>
                     <hr />
                     <div>
@@ -82,7 +188,7 @@
                         Webcam.set({
                             width: 320,
                             height: 240,
-                            image_format: 'jpeg',
+                            image_format: 'jpg', // changed from jpeg
                             jpeg_quality: 90
                         });
                         Webcam.attach('#my_camera');
@@ -112,10 +218,10 @@
         </tr>
         <tr>
             <td style="text-align:center" colspan="2">
-                <form asp-controller="Faces" asp-action="CompareProfilePictures">
+                <form asp-controller="Faces" asp-action="ComparePictures">
                     <input type="submit" class="btn btn-primary btn-warning" value="Compare pictures" style="width:300px; height:60px; font-size:larger;">
                 </form>
             </td>
         </tr>
     </tbody>
-</table>
+</table>*@
