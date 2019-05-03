@@ -21,15 +21,16 @@ namespace AlphaFacev2.Controllers
         const string uriBase = "https://northeurope.api.cognitive.microsoft.com/face/v1.0/detect";
         private readonly AppDbContext _context;
         private readonly CognitiveServices _cognitiveServices;
-        //private readonly UserManager<IdentityUser> _userManager;
+        private readonly AccountServices _accountServices;
 
         [TempData]
         public string StatusMessage { get; set; }
 
-        public FacesController(AppDbContext context, CognitiveServices cognitiveServices)
+        public FacesController(AppDbContext context, CognitiveServices cognitiveServices, AccountServices accountServices)
         {
             _context = context;
             _cognitiveServices = cognitiveServices;
+            _accountServices = accountServices;
         }
 
         public IActionResult Face()
@@ -38,6 +39,11 @@ namespace AlphaFacev2.Controllers
         }
 
         public IActionResult Compare()
+        {
+            return View();
+        }
+
+        public IActionResult ComparisonResults()
         {
             return View();
         }
@@ -179,7 +185,6 @@ namespace AlphaFacev2.Controllers
             var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
             var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
 
-            //var user = await _userManager.GetUserAsync(User);
             // Added for reading the file as byte array an updating the database
             byte[] imageByteArray = await GetUploadedPicture(file);
 
@@ -219,7 +224,12 @@ namespace AlphaFacev2.Controllers
                 {
                     userImageByteArray = userProfile.ProfileImage;
                 }
-                // return with message "No profile picture stored for this user."
+                else
+                {
+                    return RedirectToAction("Details", "Profiles");
+                    // return with message "No profile picture stored for this user."
+                }
+
 
                 byte[] uploadedImageByteArray = await GetUploadedPicture(file);
 
@@ -228,14 +238,12 @@ namespace AlphaFacev2.Controllers
 
                 var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
 
-                return View("Compare", result);
+                return View("ComparisonResults", result);
             }
 
             return RedirectToAction("Compare", "Faces");
         }
 
-
-        // FROM FaceAPIController ---------------------------------------------
         [HttpPost]
         public async Task<IActionResult> ExtractFaceMetrics(IFormFile file)
         {
@@ -266,6 +274,43 @@ namespace AlphaFacev2.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImage(IFormFile file)
+        {
+            var user = _accountServices.GetCurrentUser();
+
+            byte[] imageByteArray = await GetUploadedPicture(file);
+            StoreInDatabase(imageByteArray, user);
+
+            return RedirectToAction("Index", "Faces");
+        }
+
+        private void StoreInDatabase(byte[] imageBytes, Profile profile)
+        {
+            try
+            {
+                if (imageBytes != null)
+                {
+                    string base64String = Convert.ToBase64String(imageBytes, 0, imageBytes.Length);
+                    string imageUrl = string.Concat("data:image/jpg;base64,", base64String);
+                    ImageStore imageStore = new ImageStore()
+                    {
+                        CreateDate = DateTime.Now,
+                        ImageBase64String = imageUrl,
+                        ImageId = 0,
+                        ProfileId = profile.Id, // added
+                        ImageByteArray = imageBytes
+                    };
+                    _context.ImageStore.Add(imageStore);
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

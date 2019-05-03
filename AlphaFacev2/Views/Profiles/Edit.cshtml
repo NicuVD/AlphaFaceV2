@@ -39,19 +39,30 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IpAdress" class="control-label"></label>
-                <input asp-for="IpAdress" class="form-control" />
-                <span asp-validation-for="IpAdress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ProfileImage" class="control-label"></label>
-                <input asp-for="ProfileImage" class="form-control" />
+                <div>
+                    @{
+                        byte[] byteArray = new byte[1];
+                        if (Model.ProfileImage == null)
+                        {
+                            byteArray[0] = 0;
+                        }
+                        else
+                        {
+                            byteArray = Model.ProfileImage;
+                        }
+                        var base64 = Convert.ToBase64String(byteArray);
+                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                    }
+                    <img src="@imgSrc" alt="Profile Picture" height="100" />
+                </div>
+                @*<input asp-for="ProfileImage" class="form-control" />*@
                 <span asp-validation-for="ProfileImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Input password to save changes</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

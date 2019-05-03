@@ -6,32 +6,29 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using AlphaFacev2.Models;
 using Microsoft.AspNetCore.Http;
+using AlphaFacev2.Services;
 
 namespace AlphaFacev2.Controllers
 {
     public class HomeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly AccountServices _accountServices;
 
-        public HomeController(AppDbContext context)
+        public HomeController(AppDbContext context, AccountServices accountServices)
         {
             _context = context;
+            _accountServices = accountServices;
         }
 
         public IActionResult Index()
         {
-            History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
+            var user = _accountServices.GetCurrentUser();
 
-            if ( lastLogin != null)
+            if (user.IsLoggedIn == true)
             {
-                lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
-                var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
-
-                if (user.IsLoggedIn == true)
-                {
-                    HttpContext.Session.SetString("UserID", user.Id.ToString());
-                    HttpContext.Session.SetString("UserName", user.UserName);
-                }
+                HttpContext.Session.SetString("UserID", user.Id.ToString());
+                HttpContext.Session.SetString("UserName", user.UserName);
             }
 
             return View();
