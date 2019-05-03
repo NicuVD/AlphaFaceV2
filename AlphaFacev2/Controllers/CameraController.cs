@@ -110,7 +110,8 @@ namespace AlphaFacev2.Controllers
                         CreateDate = DateTime.Now,
                         ImageBase64String = imageUrl,
                         ImageId = 0,
-                        ProfileId = profile.Id // added
+                        ProfileId = profile.Id, // added
+                        ImageByteArray = imageBytes
                     };
                     _context.ImageStore.Add(imageStore);
                     _context.SaveChanges();

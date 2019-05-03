@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AlphaFacev2.Models;
+using AlphaFacev2.Services;
 using Microsoft.AspNetCore.Http;
 
 namespace AlphaFacev2.Controllers
@@ -13,23 +14,49 @@ namespace AlphaFacev2.Controllers
     public class ProfilesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly AccountServices _accountServices;
 
-        public ProfilesController(AppDbContext context)
+        public ProfilesController(AppDbContext context, AccountServices accountServices)
         {
             _context = context;
+            _accountServices = accountServices;
         }
 
         // GET: Profiles
         public async Task<IActionResult> Index()
         {
+            var user = _accountServices.GetCurrentUser();
+
             return View(await _context.Profile.ToListAsync());
         }
+
+        //public async Task<IActionResult> Details()
+        //{
+        //    History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
+        //    var user = await _context.Profile.FirstOrDefaultAsync(p => p.UserName == lastLogin.Username);
+
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(user);
+        //}
 
         // GET: Profiles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            //History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
-            var user = _context.Profile.FirstOrDefault(p => p.Id == id);
+            Profile user;
+
+            if (id == null)
+            {
+                History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
+                user = await _context.Profile.FirstOrDefaultAsync(p => p.UserName == lastLogin.Username);
+            }
+            else
+            {
+                user = await _context.Profile.FirstOrDefaultAsync(p => p.Id == id);
+            }
 
             if (user == null)
             {
@@ -82,34 +109,50 @@ namespace AlphaFacev2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,DateOfBirth,Gender,Email,UserName,IpAdress,ProfileImage")] Profile profile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,DateOfBirth,Gender,Email,Password,ProfileImage")] Profile profile)
         {
             if (id != profile.Id)
             {
                 return NotFound();
             }
 
+            var errors = ModelState.Values.SelectMany(v => v.Errors);
+
             if (ModelState.IsValid)
             {
-                try
+                var user = await _context.Profile.FirstOrDefaultAsync(u => u.Id == profile.Id);
+                if (profile.Password == user.Password)
                 {
-                    _context.Update(profile);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProfileExists(profile.Id))
+                    user.FirstName = profile.FirstName;
+                    user.LastName = profile.LastName;
+                    user.DateOfBirth = profile.DateOfBirth;
+                    user.Gender = profile.Gender;
+                    user.Email = profile.Email;
+                    user.UserName = profile.Email;
+
+                    await Logout();
+                    await LoginAsync(user);
+
+                    try
                     {
-                        return NotFound();
+                        _context.Profile.Update(user);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!ProfileExists(profile.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Details));
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(profile);
+            return RedirectToAction("Details");
         }
 
         // GET: Profiles/Delete/5
@@ -189,8 +232,8 @@ namespace AlphaFacev2.Controllers
                 var loginTime = DateTime.Now;
                 var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
                 bool loginSucces = true;
-                bool isUserLogedIn = true;
-                var historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                bool isUserLoggedIn = true;
+                var historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLoggedIn);
 
                 _context.History.Add(historyEntry);
                 _context.Profile.Add(newProfile);
@@ -223,45 +266,48 @@ namespace AlphaFacev2.Controllers
 
         public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile user)
         {
-            var loginTime = DateTime.Now;
-            bool loginSucces = false;
-            var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
-            bool isUserLogedIn = false;
-            var historyEntry = new History();
-
-            var account = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName && p.Password == user.Password);
-            if (account != null)
+            if (_context.Profile.Count(p => p.UserName == user.UserName) > 0)
             {
-                user = account;
-                user.IsLoggedIn = true;
-                loginSucces = true;
-                isUserLogedIn = true;
-                historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                var loginTime = DateTime.Now;
+                bool loginSucces = false;
+                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+                bool isUserLogedIn = false;
+                History historyEntry = new History();
 
-                _context.History.Add(historyEntry);
-                _context.Profile.Update(user);
-                await _context.SaveChangesAsync();
+                Profile account = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName && p.Password == user.Password);
+                if (account.IsLoggedIn == false)
+                {
+                    user = account;
+                    user.IsLoggedIn = true;
+                    loginSucces = true;
+                    isUserLogedIn = true;
+                    historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
 
-                HttpContext.Session.SetString("UserID", account.Id.ToString());
-                HttpContext.Session.SetString("UserName", account.UserName);
+                    _context.History.Add(historyEntry);
+                    _context.Profile.Update(user);
+                    await _context.SaveChangesAsync();
 
-                return RedirectToAction("Welcome");
+                    HttpContext.Session.SetString("UserID", account.Id.ToString());
+                    HttpContext.Session.SetString("UserName", account.UserName);
+
+                    return RedirectToAction("Details");
+                }
+                else
+                {
+                    historyEntry = LogHistory(account, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                    _context.History.Add(historyEntry);
+                    await _context.SaveChangesAsync();
+
+                    ModelState.AddModelError("", "Username or password is incorrect!");
+                }
             }
-            else
-            {
-                historyEntry = LogHistory(account, loginTime, loginSucces, ipAddress, isUserLogedIn);
-                _context.History.Add(historyEntry);
-                await _context.SaveChangesAsync();
 
-                ModelState.AddModelError("", "Username or password is incorrect!");
-            }
-
-            return View();
+            return RedirectToAction("Login");
         }
 
         private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, System.Net.IPAddress ipAddress, bool isUserLogedIn)
         {
-            var historyEntry = new History
+            History historyEntry = new History
             {
                 Username = user.Email,
                 Password = user.Password,
@@ -292,7 +338,7 @@ namespace AlphaFacev2.Controllers
             var loginTime = DateTime.Now;
             bool loginSucces = false;
             var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
-            var historyEntry = new History();
+            History historyEntry = new History();
             bool isUserLogedIn = false;
 
             var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
@@ -300,14 +346,15 @@ namespace AlphaFacev2.Controllers
 
             if (user.IsLoggedIn == true)
             {
-                var IsSignedIn = false; // need to update history with this property
                 user.IsLoggedIn = false;
                 loginSucces = true;
+                lastLogin.IsUserLoggedIn = false;
             }
             // need to update Db entry in History() and Profile(change user status to not logged in)
 
             historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
 
+            _context.History.Update(lastLogin);
             _context.History.Add(historyEntry);
             _context.Profile.Update(user);
             await _context.SaveChangesAsync();
@@ -315,6 +362,33 @@ namespace AlphaFacev2.Controllers
             HttpContext.Session.Clear();
 
             return RedirectToAction("Index");
+        }
+
+        public Profile GetCurrentUser()
+        {
+            History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
+
+            if (lastLogin != null)
+            {
+                lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
+                var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+
+                if (user.IsLoggedIn == true)
+                {
+                    HttpContext.Session.SetString("UserID", user.Id.ToString());
+                    HttpContext.Session.SetString("UserName", user.UserName);
+
+                    return user;
+                }
+                else
+                {
+                    return new Profile();
+                }
+            }
+            else
+            {
+                return new Profile();
+            }
         }
 
         //public async void LogoutAllUsers()
@@ -331,7 +405,7 @@ namespace AlphaFacev2.Controllers
         //public async void LogoutExpiredSession()
         //{
         //    List<Profile> users = await _context.Profile.ToListAsync();
-            
+
         //    foreach (var user in users)
         //    {
         //        History history = await _context.History.FirstOrDefaultAsync(h => h.Username == user.UserName && user.IsLoggedIn == true);

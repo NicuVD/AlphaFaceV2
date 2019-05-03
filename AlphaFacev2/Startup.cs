@@ -38,6 +38,8 @@ namespace AlphaFacev2
 
             services.AddScoped<CognitiveServices>();
 
+            services.AddScoped<AccountServices>();
+
             services.AddMvc();
 
             // NOTE: added for authentication ------------------
