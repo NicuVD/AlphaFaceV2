@@ -56,13 +56,20 @@ body {
 }
 
 .column {
-    float: left;
-    width: 50%;
+    float:left;
+    width: 33%;
 }
 
 /* Clear floats after the columns */
-.row:after {
+.row::after {
     content: "";
     display: table;
     clear: both;
 }
+
+img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+

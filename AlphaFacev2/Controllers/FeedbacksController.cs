@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using AlphaFacev2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaFacev2.Controllers
 {
+    [Authorize]
     public class FeedbacksController : Controller
     {
         private readonly IFeedbackRepository _feedbackRepository;

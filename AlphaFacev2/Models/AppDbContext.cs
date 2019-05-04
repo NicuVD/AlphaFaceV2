@@ -12,10 +12,10 @@ namespace AlphaFacev2.Models
 
         }
 
-        public virtual DbSet<Profile> Profile { get; set; }
-        public virtual DbSet<History> History { get; set; }
-        public virtual DbSet<Face> Face { get; set; }
-        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Profile> Profile { get; set; }
+        public DbSet<History> History { get; set; }
+        public DbSet<Face> Face { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
         public DbSet<ImageStore> ImageStore { get; set; }
     }
 }

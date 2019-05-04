@@ -213,7 +213,7 @@ namespace AlphaFacev2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> RegisterAsync([Bind("FirstName,LastName,DateOfBirth,Gender,Email,Password")] Profile user)
+        public async Task<IActionResult> RegisterAsync([Bind("FirstName,LastName,DateOfBirth,Gender,Email,Password,ConfirmPassword")] Profile user)
         {
             if (ModelState.IsValid)
             {
@@ -225,6 +225,7 @@ namespace AlphaFacev2.Controllers
                     Gender = user.Gender,
                     Email = user.Email,
                     Password = user.Password,
+                    //ConfirmPassword = user.ConfirmPassword,
                     UserName = user.Email,
                     IsLoggedIn = true // this must be set to false when logging out
                 };
@@ -275,26 +276,29 @@ namespace AlphaFacev2.Controllers
                 History historyEntry = new History();
 
                 Profile account = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName && p.Password == user.Password);
-                if (account.IsLoggedIn == false)
+                if (account != null)
                 {
-                    user = account;
-                    user.IsLoggedIn = true;
-                    loginSucces = true;
-                    isUserLogedIn = true;
-                    historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                    if ((account.IsLoggedIn == false))
+                    {
+                        user = account;
+                        user.IsLoggedIn = true;
+                        loginSucces = true;
+                        isUserLogedIn = true;
+                        historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
 
-                    _context.History.Add(historyEntry);
-                    _context.Profile.Update(user);
-                    await _context.SaveChangesAsync();
+                        _context.History.Add(historyEntry);
+                        _context.Profile.Update(user);
+                        await _context.SaveChangesAsync();
 
-                    HttpContext.Session.SetString("UserID", account.Id.ToString());
-                    HttpContext.Session.SetString("UserName", account.UserName);
+                        HttpContext.Session.SetString("UserID", account.Id.ToString());
+                        HttpContext.Session.SetString("UserName", account.UserName);
 
-                    return RedirectToAction("Details");
+                        return RedirectToAction("Details");
+                    }
                 }
                 else
                 {
-                    historyEntry = LogHistory(account, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                    historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
                     _context.History.Add(historyEntry);
                     await _context.SaveChangesAsync();
 
@@ -309,7 +313,7 @@ namespace AlphaFacev2.Controllers
         {
             History historyEntry = new History
             {
-                Username = user.Email,
+                Username = user.UserName,
                 Password = user.Password,
                 LoginTime = loginTime,
                 IsActionSuccess = loginSucces,
@@ -361,7 +365,7 @@ namespace AlphaFacev2.Controllers
 
             HttpContext.Session.Clear();
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         public Profile GetCurrentUser()
