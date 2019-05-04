@@ -12,6 +12,8 @@ using System.IO;
 using AlphaFacev2.Services;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 
 namespace AlphaFacev2.Controllers
 {
@@ -22,12 +24,14 @@ namespace AlphaFacev2.Controllers
         private readonly AppDbContext _context;
         private readonly CognitiveServices _cognitiveServices;
         private readonly AccountServices _accountServices;
+        private readonly IHostingEnvironment _environment;
 
         [TempData]
         public string StatusMessage { get; set; }
 
-        public FacesController(AppDbContext context, CognitiveServices cognitiveServices, AccountServices accountServices)
+        public FacesController(IHostingEnvironment hostingEnvironment, AppDbContext context, CognitiveServices cognitiveServices, AccountServices accountServices)
         {
+            _environment = hostingEnvironment;
             _context = context;
             _cognitiveServices = cognitiveServices;
             _accountServices = accountServices;
@@ -50,9 +54,38 @@ namespace AlphaFacev2.Controllers
 
         // GET: Faces
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Face.ToListAsync());
+            // grab user profile picture
+            var user = _accountServices.GetCurrentUser();
+            Image userImage = new Image();
+            try
+            {
+                userImage.ImageByteArray = user.ProfileImage;
+                userImage.ImageBase64 = ConvertByteArrayToBase64(userImage.ImageByteArray);
+                userImage.ImageSource = ReturnImageSource(userImage.ImageBase64);
+            }
+            catch (Exception)
+            {
+                //throw;
+            }
+
+            // grab incoming snapshot from the webcam and create a new Image object with the data
+            //var webcamImageFromDataBase = await _context.ImageStore.LastOrDefaultAsync(i => i.ProfileId == user.Id);
+
+            Image webcamImage = new Image();
+            //if (webcamImageFromDataBase.ImageByteArray != null)
+            //{
+            //    webcamImage.ImageByteArray = webcamImageFromDataBase.ImageByteArray;
+            //    webcamImage.ImageBase64 = ConvertByteArrayToBase64(webcamImageFromDataBase.ImageByteArray);
+            //    webcamImage.ImageSource = ReturnImageSource(webcamImage.ImageBase64);
+            //}
+
+            List<Image> images = new List<Image>();
+            images.Add(userImage);
+            images.Add(webcamImage);
+
+            return View(images);
         }
 
         // GET: Faces/Details/5
@@ -180,6 +213,23 @@ namespace AlphaFacev2.Controllers
             return _context.Face.Any(e => e.Id == id);
         }
 
+        private static string ReturnImageSource(string base64)
+        {
+            return String.Format("data:image/jpg;base64,{0}", base64);
+        }
+
+        public string ConvertByteArrayToBase64(byte[] byteArray)
+        {
+            var base64 = Convert.ToBase64String(byteArray);
+            return base64;
+        }
+
+        public byte[] ConvertBase64ToByteArray(string base64Image)
+        {
+            var byteArray = Convert.FromBase64String(base64Image);
+            return byteArray;
+        }
+
         public async Task<IActionResult> PostProfilePicture(IFormFile file)
         {
             var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
@@ -211,6 +261,7 @@ namespace AlphaFacev2.Controllers
             return imageByteArray;
         }
 
+        [HttpPost]
         public async Task<IActionResult> CompareProfilePictures(IFormFile file)
         {
             var lastLogin = _context.History.Last(l => l.IsUserLoggedIn == true);
@@ -244,13 +295,64 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("Compare", "Faces");
         }
 
-        public async Task<IActionResult> ComparePictures(IList<IFormFile> files)
+        [HttpPost]
+        public async Task<IActionResult> CompareToWebcamPicture()
         {
-            var firstFile = files.First();
-            var secondFile = files.Last();
+            var lastLogin = _context.History.Last(l => l.IsUserLoggedIn == true);
 
-            byte[] firstUploadedImageByteArray = await GetUploadedPicture(firstFile);
-            byte[] secondUploadedImageByteArray = await GetUploadedPicture(secondFile);
+            if (lastLogin != null)
+            {
+                var userProfile = await _context.Profile.FirstOrDefaultAsync(p => p.UserName == lastLogin.Username);
+                byte[] userImageByteArray = new byte[] { 0 };
+
+                if (userProfile.ProfileImage != null)
+                {
+                    userImageByteArray = userProfile.ProfileImage;
+                }
+                else
+                {
+                    return RedirectToAction("Details", "Profiles");
+                    // return with message "No profile picture stored for this user."
+                }
+
+                ImageStore webcamImageStore = new ImageStore();
+                webcamImageStore = await _context.ImageStore.LastOrDefaultAsync(i => i.ProfileId == userProfile.Id);
+
+                byte[] webcamImage = webcamImageStore.ImageByteArray;
+
+                Stream userImage = new MemoryStream(userImageByteArray);
+                Stream uploadedImage = new MemoryStream(webcamImage);
+
+                var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
+
+                return View("ComparisonResults", result);
+            }
+
+            return RedirectToAction("Compare", "Faces");
+        }
+
+        //[HttpPost]
+        //public async Task<IActionResult> ComparePictures(IList<IFormFile> files)
+        //{
+        //    var firstFile = files.First();
+        //    var secondFile = files.Last();
+
+        //    byte[] firstUploadedImageByteArray = await GetUploadedPicture(firstFile);
+        //    byte[] secondUploadedImageByteArray = await GetUploadedPicture(secondFile);
+
+        //    Stream firstImage = new MemoryStream(firstUploadedImageByteArray);
+        //    Stream secondImage = new MemoryStream(secondUploadedImageByteArray);
+
+        //    var result = await _cognitiveServices.VerifyAsync(firstImage, secondImage);
+
+        //    return View("ComparisonResults", result);
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> ComparePictures(IList<byte[]> byteArrays)
+        {
+            byte[] firstUploadedImageByteArray = byteArrays.First();
+            byte[] secondUploadedImageByteArray = byteArrays.Last();
 
             Stream firstImage = new MemoryStream(firstUploadedImageByteArray);
             Stream secondImage = new MemoryStream(secondUploadedImageByteArray);
@@ -303,6 +405,133 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("Index", "Faces");
         }
 
+        public IActionResult Capture()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Capture(string name)
+        {
+            var lastLogin = _context.History.LastOrDefault();
+            var lastLoggedUser = _context.Profile.FirstOrDefault(u => u.UserName == lastLogin.Username);
+            Profile loggedUser = new Profile();
+
+            if (lastLoggedUser.IsLoggedIn)
+            {
+                loggedUser = lastLoggedUser;
+            }
+
+            var files = HttpContext.Request.Form.Files;
+            if (files != null)
+            {
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        // Getting Filename  
+                        var fileName = file.FileName;
+                        // Unique filename "Guid"  
+                        var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+                        // Getting Extension  
+                        var fileExtension = Path.GetExtension(fileName);
+                        // Concating filename + fileExtension (unique filename)  
+                        var newFileName = string.Concat(myUniqueFileName, fileExtension);
+                        //  Generating Path to store photo   
+                        var filepath = Path.Combine(_environment.WebRootPath, "CameraPhotos") + $@"\{newFileName}";
+
+                        if (!string.IsNullOrEmpty(filepath))
+                        {
+                            // Storing Image in Folder  
+                            StoreInFolder(file, filepath);
+                        }
+
+                        var imageBytes = System.IO.File.ReadAllBytes(filepath);
+                        if (imageBytes != null)
+                        {
+                            // Storing Image in Folder  
+                            StoreInDatabase(imageBytes, loggedUser);
+                        }
+                    }
+                }
+                return Json(true);
+            }
+            else
+            {
+                return Json(false);
+            }
+        }
+
+       public IActionResult CaptureAndCompare(string name)
+        {
+            var lastLogin = _context.History.LastOrDefault();
+            var lastLoggedUser = _context.Profile.FirstOrDefault(u => u.UserName == lastLogin.Username);
+            Profile loggedUser = new Profile();
+
+            if (lastLoggedUser.IsLoggedIn)
+            {
+                loggedUser = lastLoggedUser;
+            }
+
+            var file = HttpContext.Request.Form.Files.FirstOrDefault();
+            if ((file != null) && (file.Length > 0))
+            {
+                // Getting Filename  
+                var fileName = file.FileName;
+                // Unique filename "Guid"  
+                var myUniqueFileName = Convert.ToString(Guid.NewGuid());
+                // Getting Extension  
+                var fileExtension = Path.GetExtension(fileName);
+                // Concating filename + fileExtension (unique filename)  
+                var newFileName = string.Concat(myUniqueFileName, fileExtension);
+                //  Generating Path to store photo   
+                var filepath = Path.Combine(_environment.WebRootPath, "CameraPhotos") + $@"\{newFileName}";
+
+                var imageBytes = System.IO.File.ReadAllBytes(filepath);
+                if (imageBytes != null)
+                {
+                    // Storing Image in Folder  
+                    StoreInDatabase(imageBytes, loggedUser);
+                }
+
+                List<byte[]> images = new List<byte[]>();
+                images.Add(loggedUser.ProfileImage);
+                images.Add(imageBytes);
+
+                return RedirectToAction("ComparePictures", images);
+            }
+
+            return View("Index");
+        }
+
+        [HttpGet]
+        public IActionResult CompareDisplayedPictures()
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View(); // Wrong!
+        }
+
+        /// <summary>  
+        /// Saving captured image into Folder.  
+        /// </summary>  
+        /// <param name="file"></param>  
+        /// <param name="fileName"></param>  
+        private void StoreInFolder(IFormFile file, string fileName)
+        {
+            using (FileStream fs = System.IO.File.Create(fileName))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+            }
+        }
+
+        /// <summary>  
+        /// Saving captured image into database.  
+        /// </summary>  
+        /// <param name="imageBytes"></param>  
         private void StoreInDatabase(byte[] imageBytes, Profile profile)
         {
             try

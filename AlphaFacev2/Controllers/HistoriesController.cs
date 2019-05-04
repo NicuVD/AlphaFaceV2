@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AlphaFacev2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaFacev2.Controllers
 {
@@ -22,6 +23,18 @@ namespace AlphaFacev2.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.History.ToListAsync());
+        }
+
+        public JsonResult GetHistoryList(string username)
+        {
+            List<History> histories = new List<History>();
+
+            histories = _context.History.ToList();
+            histories.Insert(0, new History { Id = 0, Username = "Select" });
+
+            ViewBag.ListOfProfiles = histories;
+
+            return Json(new SelectList(histories, "LoginTime", "IsActionSuccess", "IpAddress"));
         }
 
         // GET: Histories/Details/5

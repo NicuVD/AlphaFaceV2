@@ -16,7 +16,7 @@ namespace AlphaFacev2.Models
 
         public void AddFeedback(Feedback feedback)
         {
-            _appDbContext.Feedbacks.Add(feedback);
+            _appDbContext.Feedback.Add(feedback);
             _appDbContext.SaveChanges();
         }
     }

@@ -1,59 +1,66 @@
 ﻿@model IEnumerable<AlphaFacev2.Models.History>
 
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
 @{
-    ViewData["Title"] = "Index";
+    var user = accountServices.GetCurrentUser();
+    <h4>@user.FirstName's login history</h4>
 }
 
-<h1>Index</h1>
+@{
+    ViewData["Title"] = "Index";
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+}
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Username)
+                <h6>Login Time</h6>
+                @*@Html.DisplayNameFor(model => model.LoginTime)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Password)
+                <h6>Login success</h6>
+                @*@Html.DisplayNameFor(model => model.IsActionSuccess)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LoginTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActionSuccess)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IpAddress)
+                <h6>IP Address</h6>
+                @*@Html.DisplayNameFor(model => model.IpAddress)*@
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LoginTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActionSuccess)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IpAddress)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @{
+            foreach (var item in Model)
+            {
+                if (item.Username == user.UserName)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LoginTime)
+                        </td>
+                        <td>
+                            @{ if (item.IsActionSuccess)
+                                {
+                                    @:True
+                                }
+                                else
+                                {
+                                    @:False
+                                }
+                            }
+                            @*@Html.DisplayFor(modelItem => item.IsActionSuccess)*@
+                            @*Display true for 1 and false for 0*@
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IpAddress)
+                        </td>
+                    </tr>
+                }
+            }
+        }
+
     </tbody>
 </table>

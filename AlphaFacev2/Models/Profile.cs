@@ -36,7 +36,7 @@ namespace AlphaFacev2.Models
         public DateTime? DateOfBirth { get; set; }
 
 
-        public string IpAdress { get; set; }
+        public string IpAddress { get; set; }
 
 
         public byte[] ProfileImage { get; set; }
@@ -50,10 +50,10 @@ namespace AlphaFacev2.Models
         [Display(Name = "Password")]
         public string Password { get; set; } // added
 
-        //[Compare("Password", ErrorMessage = "Passwords do not match.")]
-        //[DataType(DataType.Password)]
-        //[Display(Name = "Confirm password")]
-        //public string ConfirmPassword { get; set; }
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        public string ConfirmPassword { get; set; }
     }
 
     public enum Genders

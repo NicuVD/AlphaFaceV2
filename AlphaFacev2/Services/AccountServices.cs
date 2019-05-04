@@ -24,7 +24,7 @@ namespace AlphaFacev2.Services
                 lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
                 var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
 
-                if (user.IsLoggedIn == true)
+                if ((user.IsLoggedIn == true) && (user != null))
                 {
                     return user;
                 }

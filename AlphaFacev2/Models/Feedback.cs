@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AlphaFacev2.Models
 {
+    
     public class Feedback
     {
         [BindNever]
