@@ -29,7 +29,15 @@ namespace AlphaFacev2.Services
                 var response1 = await client.PostAsync(uri, content1);
                 var result1 = await response1.Content.ReadAsStringAsync();
                 var face1 = JsonConvert.DeserializeObject<IList<DetectedFace>>(result1);
-                var faceId1 = face1[0].FaceId.ToString();
+                string faceId1 = null;
+                if (face1.Count != 0)
+                {
+                    faceId1 = face1.FirstOrDefault().FaceId.ToString();
+                }
+                else
+                {
+                    return new VerifiedFace();
+                }
 
                 // PREPARE SECOND CALL TO COGNITIVE SERVICES (GET SECOND FaceId)
                 var content2 = new StreamContent(secondFile);
@@ -37,7 +45,15 @@ namespace AlphaFacev2.Services
                 var response2 = await client.PostAsync(uri, content2);
                 var result2 = await response2.Content.ReadAsStringAsync();
                 var face2 = JsonConvert.DeserializeObject<IList<DetectedFace>>(result2);
-                var faceId2 = face2[0].FaceId.ToString();
+                string faceId2 = null;
+                if (face2.Count != 0)
+                {
+                    faceId2 = face2.FirstOrDefault().FaceId.ToString();
+                }
+                else
+                {
+                    return new VerifiedFace();
+                }
 
                 // PREPARE THIRD CALL TO COGNITIVE SERVICES (VERIFY BY BOTH faceIDs)
                 uri = uriBase + "verify";

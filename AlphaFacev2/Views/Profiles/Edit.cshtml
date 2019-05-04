@@ -1,5 +1,7 @@
 ﻿@model AlphaFacev2.Models.Profile
 
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
 @{
     ViewData["Title"] = "Edit";
 }
@@ -42,6 +44,8 @@
                 <label asp-for="ProfileImage" class="control-label"></label>
                 <div>
                     @{
+                        var user = accountServices.GetCurrentUser();
+
                         byte[] byteArray = new byte[1];
                         if (Model.ProfileImage == null)
                         {
@@ -56,7 +60,16 @@
                     }
                     <img src="@imgSrc" alt="Profile Picture" height="100" />
                 </div>
-                @*<input asp-for="ProfileImage" class="form-control" />*@
+                <p></p>
+                @{
+                    if (user.ProfileImage != null)
+                    {
+                                <div style="border:1px solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Face">Change profile picture</a>
+                                </div>
+                    }
+                }
+
                 <span asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -72,7 +85,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Details">Back to Profile</a>
 </div>
 
 @section Scripts {

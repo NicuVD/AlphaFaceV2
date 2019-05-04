@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AlphaFacev2.Models;
 using AlphaFacev2.Services;
 using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace AlphaFacev2.Controllers
 {
@@ -15,11 +16,16 @@ namespace AlphaFacev2.Controllers
     {
         private readonly AppDbContext _context;
         private readonly AccountServices _accountServices;
+        private readonly CognitiveServices _cognitiveServices;
 
-        public ProfilesController(AppDbContext context, AccountServices accountServices)
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        public ProfilesController(AppDbContext context, AccountServices accountServices, CognitiveServices cognitiveServices)
         {
             _context = context;
             _accountServices = accountServices;
+            _cognitiveServices = cognitiveServices;
         }
 
         // GET: Profiles
@@ -259,7 +265,6 @@ namespace AlphaFacev2.Controllers
                 return RedirectToAction(nameof(Index), "Home");
             }
 
-            // return View(); ???
             return View(user);
 
         }
@@ -267,15 +272,7 @@ namespace AlphaFacev2.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-
-            //var dummyLoginProfile = new Profile
-            //{
-            //    UserName = "vladd",
-            //    Password = "password"
-            //};
-            //return View(dummyLoginProfile);
             return View();
-
         }
 
         [HttpPost]
@@ -325,11 +322,76 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("Login");
         }
 
+        [HttpGet]
+        public IActionResult LoginAFace()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginAFace([Bind("Email")]Profile user)
+        {
+            // check if account with input email exists
+            if (_context.Profile.Count(p => p.Email == user.Email) > 0)
+            {
+                // prepare data for history log
+                var loginTime = DateTime.Now;
+                bool loginSucces = false;
+                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+                bool isUserLogedIn = false;
+                History historyEntry = new History();
+                ImageStore webcamImage = await _context.ImageStore.LastOrDefaultAsync();
+                var profileImage = _context.Profile.FirstOrDefault(p => p.Email == user.Email).ProfileImage;
+
+                // get result from Microsoft Face API
+                var result = await AFaceCompareUserPictureToWebcamPicture(webcamImage, profileImage);
+
+                // get user account with corresponding email only if Face API returns
+                // that the faces are identical with a confidence of over 0.6
+                Profile account = _context.Profile.FirstOrDefault(
+                    p => (p.Email == user.Email) && 
+                        (result.IsIdentical == true) && 
+                            (result.Confidence >= 0.6));
+
+                if (account != null)
+                {
+                    if (account.IsLoggedIn == false)
+                    {
+                        user = account;
+                        user.IsLoggedIn = true;
+                        loginSucces = true;
+                        isUserLogedIn = true;
+                        historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+
+                        _context.History.Add(historyEntry);
+                        _context.Profile.Update(user);
+                        await _context.SaveChangesAsync();
+
+                        HttpContext.Session.SetString("UserID", account.Id.ToString());
+                        HttpContext.Session.SetString("UserName", account.UserName);
+
+                        return RedirectToAction(nameof(Index), "Home");
+                    }
+                }
+                else
+                {
+                    historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                    _context.History.Add(historyEntry);
+                    await _context.SaveChangesAsync();
+
+                    ModelState.AddModelError("", "Username is incorrect or image comparison did not work properly!");
+                }
+            }
+
+            return RedirectToAction("LoginAFace");
+        }
+
         private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, System.Net.IPAddress ipAddress, bool isUserLogedIn)
         {
             History historyEntry = new History
             {
-                Username = user.UserName,
+                Username = user.Email,
                 Password = user.Password,
                 LoginTime = loginTime,
                 IsActionSuccess = loginSucces,
@@ -370,7 +432,6 @@ namespace AlphaFacev2.Controllers
                 loginSucces = true;
                 lastLogin.IsUserLoggedIn = false;
             }
-            // need to update Db entry in History() and Profile(change user status to not logged in)
 
             historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
 
@@ -411,45 +472,32 @@ namespace AlphaFacev2.Controllers
             }
         }
 
-        //public async void LogoutAllUsers()
-        //{
-        //    List<Profile> users = await _context.Profile.ToListAsync();
-        //    foreach (var user in users)
-        //    {
-        //        user.IsLoggedIn = false;
-        //        _context.Profile.Update(user);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
+        [HttpPost]
+        public async Task<VerifiedFace> AFaceCompareUserPictureToWebcamPicture(ImageStore webcamImage, byte[] profileImage)
+        {
+            Stream userImage = new MemoryStream(webcamImage.ImageByteArray);
+            Stream uploadedImage = new MemoryStream(profileImage);
 
-        //public async void LogoutExpiredSession()
-        //{
-        //    List<Profile> users = await _context.Profile.ToListAsync();
+            return await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
+        }
 
-        //    foreach (var user in users)
-        //    {
-        //        History history = await _context.History.FirstOrDefaultAsync(h => h.Username == user.UserName && user.IsLoggedIn == true);
+        public async Task<IActionResult> UpdateProfilePicture()
+        {
+            var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
+            var user = _context.Profile.FirstOrDefault(p => p.UserName == lastLogin.Username);
+            var profilePicture = await _context.ImageStore.LastOrDefaultAsync();
 
-        //        if((history.LoginTime - DateTime.Now).TotalMinutes >= 15)
-        //        {
-        //            user.IsLoggedIn = false;
-        //            _context.Profile.Update(user);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //    }
-        //}
+            // Added for reading the file as byte array an updating the database
+            byte[] imageByteArray = profilePicture.ImageByteArray;
 
-        //public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile profile)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        // add login logic here
-        //        // _context.Add(profile);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(profile);
-        //}
-
+            var profileToUpdate = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName);
+            profileToUpdate.ProfileImage = imageByteArray;
+            _context.Update<Profile>(profileToUpdate);
+            await _context.SaveChangesAsync();
+            // -----------------------------------------------
+            StatusMessage = "Your profile picture has been updated";
+            //return RedirectToRoute("Index","/Identity/Account/Manage");
+            return RedirectToAction("Index", "Profiles");
+        }
     }
 }
