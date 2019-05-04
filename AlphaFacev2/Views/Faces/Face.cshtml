@@ -2,22 +2,102 @@
     ViewData["Title"] = "Face";
 }
 
-<div class="row">
-    <section style="border:solid;border-color:dodgerblue;border-radius:10px">
-        <h5 style="text-align:center">Upload your piture for AFace</h5>
-        <hr />
-        <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="PostProfilePicture">
-            <div class="form-group">
-                <div class="col-md-10">
-                    <p>Upload one or more files using this form:</p>
-                    <input type="file" name="file" />
-                </div>
+    <div class="row">
+        <div class="column">
+            <div class="col-md-10" style="text-align:center; height: 360px;">
+                <section>
+                    <h6 style="text-align:center; width:340px">Take a picture using your webcam</h6>
+                    <div>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div id="my_camera"></div>
+                                <!-- A button for taking snaps -->
+                                <div>
+                                    <br />
+                                    <form>
+                                        <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">    </div>
+                    <!-- First, include the Webcam.js JavaScript Library -->
+                    <script src="~/webcamjs/webcam.js"></script>
+                    <!-- Configure a few settings and attach camera -->
+                    <script language="JavaScript">
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpeg', // changed from jpeg
+                            jpeg_quality: 100
+                        });
+                        Webcam.attach('#my_camera');
+                    </script>
+
+                    <!-- Code to handle taking the snapshot and displaying it locally -->
+                    <script language="JavaScript">
+                        function take_snapshot() {
+                            // take snapshot and get image data
+                            Webcam.snap(function (data_uri) {
+                                // display results in page
+                                document.getElementById('results').innerHTML =
+                                    '<img src="' + data_uri + '"/>';
+
+                                Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
+                                                                                                                                                                                        /*alert('Photo Captured')*/;
+                                });
+                            });
+                        }
+                    </script>
+                </section>
             </div>
-            <div class="form-group">
-                <div class="col-md-10">
-                    <input type="submit" value="Upload" />
-                </div>
+            <br />
+            <div style="min-width:340px; border:1px solid white">
+                <section style="border:solid;border-color:dodgerblue;border-radius:10px">
+                    <h6 style="text-align:center">Update profile picture</h6>
+                    <hr />
+                    <form method="post" enctype="multipart/form-data" asp-controller="Profiles" asp-action="PostProfilePicture">
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <p>Upload one or more files using this form:</p>
+                                <input type="file" name="file" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                <input type="submit" value="Upload" />
+                            </div>
+                        </div>
+                    </form>
+                </section>
             </div>
-        </form>
-    </section>
+        </div>
+
+        <div class="column" style="width:60px"></div>
+
+        <div class="column" style="min-width:400px; border:1px solid white">
+            <form method="post" asp-controller="Profiles" asp-action="UpdateProfilePicture" style="text-align:left">
+                <div style="text-align:center; height:280px; width:340px">
+                    <h6>Picture to use for AFace login</h6>
+                    <div class="col-md-10">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div id="results"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <input type="submit" class="btn btn-primary btn-warning" value="Update profile picture" style="width:260px; height:40px; font-size:larger;">
+            </form>
+        </div>
+    </div>
+<br />
+<div>
+    <a asp-controller="Profiles" asp-action="Login">Back to Login</a>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

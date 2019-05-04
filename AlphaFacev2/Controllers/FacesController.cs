@@ -416,10 +416,12 @@ namespace AlphaFacev2.Controllers
             var lastLogin = _context.History.LastOrDefault();
             var lastLoggedUser = _context.Profile.FirstOrDefault(u => u.UserName == lastLogin.Username);
             Profile loggedUser = new Profile();
-
-            if (lastLoggedUser.IsLoggedIn)
+            if (lastLoggedUser != null)
             {
-                loggedUser = lastLoggedUser;
+                if (lastLoggedUser.IsLoggedIn)
+                {
+                    loggedUser = lastLoggedUser;
+                }
             }
 
             var files = HttpContext.Request.Form.Files;
