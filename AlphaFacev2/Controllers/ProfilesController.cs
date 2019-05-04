@@ -179,9 +179,25 @@ namespace AlphaFacev2.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var profile = await _context.Profile.FindAsync(id);
+
+            var histories = await _context.History.ToListAsync();
+
+            if (profile.IsLoggedIn == true)
+            {
+                await Logout();
+            }
+
+            foreach (var item in histories)
+            {
+                if (item.Username == profile.UserName)
+                {
+                    _context.History.Remove(item);
+                }
+            }
+
             _context.Profile.Remove(profile);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), "Home");
         }
 
         private bool ProfileExists(int id)
@@ -240,7 +256,7 @@ namespace AlphaFacev2.Controllers
                 _context.Profile.Add(newProfile);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Home");
             }
 
             // return View(); ???
@@ -265,9 +281,9 @@ namespace AlphaFacev2.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> LoginAsync([Bind("UserName, Password")]Profile user)
+        public async Task<IActionResult> LoginAsync([Bind("Email, Password")]Profile user)
         {
-            if (_context.Profile.Count(p => p.UserName == user.UserName) > 0)
+            if (_context.Profile.Count(p => p.Email == user.Email) > 0)
             {
                 var loginTime = DateTime.Now;
                 bool loginSucces = false;
@@ -275,10 +291,10 @@ namespace AlphaFacev2.Controllers
                 bool isUserLogedIn = false;
                 History historyEntry = new History();
 
-                Profile account = _context.Profile.FirstOrDefault(p => p.UserName == user.UserName && p.Password == user.Password);
+                Profile account = _context.Profile.FirstOrDefault(p => p.Email == user.Email && p.Password == user.Password);
                 if (account != null)
                 {
-                    if ((account.IsLoggedIn == false))
+                    if (account.IsLoggedIn == false)
                     {
                         user = account;
                         user.IsLoggedIn = true;
@@ -293,7 +309,7 @@ namespace AlphaFacev2.Controllers
                         HttpContext.Session.SetString("UserID", account.Id.ToString());
                         HttpContext.Session.SetString("UserName", account.UserName);
 
-                        return RedirectToAction("Details");
+                        return RedirectToAction(nameof(Index), "Home");
                     }
                 }
                 else
