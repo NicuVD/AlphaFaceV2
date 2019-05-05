@@ -18,14 +18,15 @@
 
                 if (user.ProfileImage == null)
                 {
+
                     <div style="border:solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Compare">Do a AFace comparison using curent profile picture</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Face">Upload a picture for AFace authentication</a>
                     </div>
                 }
                 else
                 {
                     <div style="border:solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Face">Upload your picture for AFace authentication</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Index">Do a AFace comparison using curent profile picture</a>
                     </div>
                 }
             }

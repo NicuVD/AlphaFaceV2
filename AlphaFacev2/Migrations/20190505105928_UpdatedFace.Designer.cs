@@ -4,14 +4,16 @@ using AlphaFacev2.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AlphaFacev2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190505105928_UpdatedFace")]
+    partial class UpdatedFace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,15 +27,13 @@ namespace AlphaFacev2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte[]>("ComparisonImage");
+                    b.Property<double>("Accuracy");
 
-                    b.Property<double>("Confidence");
+                    b.Property<byte[]>("ComparisonImage");
 
                     b.Property<string>("FaceGuid");
 
                     b.Property<string>("Gender");
-
-                    b.Property<bool>("IsIdentical");
 
                     b.Property<int>("ProfileId");
 

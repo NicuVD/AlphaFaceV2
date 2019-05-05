@@ -47,9 +47,9 @@ namespace AlphaFacev2.Controllers
             return View();
         }
 
-        public IActionResult ComparisonResults()
+        public async Task<IActionResult> ComparisonResults()
         {
-            return View();
+            return View(await _context.Face.OrderByDescending(f => f.Id).ToListAsync());
         }
 
         // GET: Faces
@@ -317,6 +317,7 @@ namespace AlphaFacev2.Controllers
 
                 ImageStore webcamImageStore = new ImageStore();
                 webcamImageStore = await _context.ImageStore.LastOrDefaultAsync(i => i.ProfileId == userProfile.Id);
+                
 
                 byte[] webcamImage = webcamImageStore.ImageByteArray;
 
@@ -325,7 +326,22 @@ namespace AlphaFacev2.Controllers
 
                 var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
 
-                return View("ComparisonResults", result);
+                if (result != null)
+                {
+                    Face faceComparison = new Face()
+                    {
+                        ProfileId = userProfile.Id,
+                        ProfileImage = userProfile.ProfileImage,
+                        ComparisonImage = webcamImageStore.ImageByteArray,
+                        IsIdentical = result.IsIdentical,
+                        Confidence = result.Confidence
+                    };
+
+                    _context.Face.Add(faceComparison);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("ComparisonResults");
             }
 
             return RedirectToAction("Compare", "Faces");
