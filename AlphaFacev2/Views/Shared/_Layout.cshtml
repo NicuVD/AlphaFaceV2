@@ -34,22 +34,25 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Index">AFace</a>
-                        </li>
                         @{
                             var user = accountServices.GetCurrentUser();
                             if (user.UserName != null)
                             {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Index">AFace</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Profiles" asp-action="Index">Profiles</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Histories" asp-action="Index">Histories</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="ComparisonResults">Comparison history</a>
+                                </li>
                             }
 
-                            
+
                         }
                     </ul>
                 </div>

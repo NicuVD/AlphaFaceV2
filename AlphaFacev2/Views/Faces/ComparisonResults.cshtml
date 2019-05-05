@@ -1,20 +1,74 @@
-﻿@model AlphaFacev2.Models.VerifiedFace
+﻿@model IEnumerable<AlphaFacev2.Models.Face>
+
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
 @{
     ViewData["Title"] = "ComparisonResults";
 }
 
-<h5>Comparison results</h5>
-<hr />
-<div class="row">
-    <div class="form-group">
-        <div class="col-md-10">
-            <p>Is identical: @Model.IsIdentical</p>
-        </div>
-        <div class="col-md-10">
-            <p>Confidence: @Model.Confidence</p>
-        </div>
-    </div>
+@{
+    var user = accountServices.GetCurrentUser();
+}
 
-</div>
-
+<h5>@user.FirstName's comparison results history</h5>
+<table class="table">
+    <thead>
+        <tr style="font-size:smaller; text-align:center">
+            <th>
+                Profile picture
+            </th>
+            <th>
+                Comparison picture
+            </th>
+            <th>
+                Is identical?
+            </th>
+            <th>
+                Confidence
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item.ProfileId == user.Id)
+            {
+                <tr style="height:auto; font-size:smaller; text-align:center">
+                    <td>
+                        @{
+                            var byteArray = item.ProfileImage;
+                            var base64 = Convert.ToBase64String(byteArray);
+                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                        }
+                        <img src="@imgSrc" alt="Profile Picture" height="100" />
+                    </td>
+                    <td>
+                        @{
+                            var byteArray2 = item.ComparisonImage;
+                            var base642 = Convert.ToBase64String(byteArray2);
+                            var imgSrc2 = String.Format("data:image/jpg;base64,{0}", base642);
+                        }
+                        <img src="@imgSrc2" alt="Profile Picture" height="100" />
+                    </td>
+                    <td>
+                        @{
+                            if (item.IsIdentical == true)
+                            {
+                                @:True
+                            }
+                            else
+                            {
+                                @:False
+                            }
+                        }
+                        @*@Html.DisplayFor(modelItem => item.IsIdentical)*@
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Confidence)
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
 
