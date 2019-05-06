@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaFacev2.Controllers
 {
-    [Authorize]
+    
     public class FeedbacksController : Controller
     {
         private readonly IFeedbackRepository _feedbackRepository;
@@ -20,8 +20,9 @@ namespace AlphaFacev2.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpPost]
-        public IActionResult Index(Feedback feedback)
+        public IActionResult PostFeedback(Feedback feedback)
         {
             if (ModelState.IsValid)
             {
@@ -29,6 +30,16 @@ namespace AlphaFacev2.Controllers
                 return RedirectToAction("FeedbackComplete");
             }
             return View(feedback);
+        }
+
+        public IActionResult PostMessage(Feedback feedback)
+        {
+            if (ModelState.IsValid)
+            {
+                _feedbackRepository.AddFeedback(feedback);
+                return RedirectToAction(nameof(Index), "Home");
+            }
+            return View(nameof(Index), "Home");
         }
 
         public IActionResult FeedbackComplete()
