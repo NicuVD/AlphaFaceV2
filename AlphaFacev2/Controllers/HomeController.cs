@@ -27,11 +27,16 @@ namespace AlphaFacev2.Controllers
 
             if (user.IsLoggedIn == true)
             {
-                HttpContext.Session.SetString("UserID", user.Id.ToString());
-                HttpContext.Session.SetString("UserName", user.UserName);
+                SetContextOnLoginOrRegister(user);
             }
 
             return View();
+        }
+
+        private void SetContextOnLoginOrRegister(Profile account)
+        {
+            HttpContext.Session.SetString("FirstName", account.FirstName);
+            HttpContext.Session.SetString("UserName", account.UserName);
         }
 
         public IActionResult Privacy()

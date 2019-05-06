@@ -1,30 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Http
 
-    <ul class="navbar-nav">
-        @if (Context.Session.GetString("UserName") != null)
+
+<div class="w3-top">
+    <div class="w3-bar w3-white" id="myNavbar">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+            <i class="fa fa-bars"></i>
+        </a>
+        @if (Context.Session.GetString("FirstName") != null)
         {
-            <li class="nav-item">
-                <a id="manage" class="nav-link text-dark" asp-controller="Profiles" asp-action="Details">Hello @Context.Session.GetString("UserName")!</a>
-            </li>
-            <li class="nav-item">
-                <form id="logoutForm" class="form-inline" asp-controller="Profiles" asp-action="Logout">
-                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-                </form>
-            </li>
+            <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Profiles" asp-action="Details"><i class="fa fa-envelope"></i> Hello @Context.Session.GetString("FirstName")!</a>
+            <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Profiles" asp-action="Logout"><i class="fa fa-envelope"></i> LOGIN</a>
+
+            <form id="logoutForm" class="form-inline" asp-controller="Profiles" asp-action="Logout">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            </form>
         }
         else
         {
-            <li class="nav-item">
-                <a class="nav-link text-dark" id="register" asp-controller="Profiles" asp-action="Register">Register</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" id="login" asp-controller="Profiles" asp-action="Login">Login</a>
-            </li>
+            <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Profiles" asp-action="Register"><i class="fa fa-envelope"></i> REGISTER</a>
+            <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Profiles" asp-action="Login"><i class="fa fa-envelope"></i> LOGIN</a>
         }
-        @*<li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-controller="Profiles" asp-action="Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" id="login" asp-controller="Profiles" asp-action="Login">Login</a>
-        </li>*@
-    </ul>
+    </div>
+</div>
+

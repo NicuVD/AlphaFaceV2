@@ -39,58 +39,93 @@ namespace AlphaFacev2.Controllers
 
         public IActionResult Face()
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             return View();
         }
 
         public IActionResult Compare()
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             return View();
         }
 
         public async Task<IActionResult> ComparisonResults()
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             return View(await _context.Face.OrderByDescending(f => f.Id).ToListAsync());
         }
 
         // GET: Faces
-
         public IActionResult Index()
         {
             // grab user profile picture
             var user = _accountServices.GetCurrentUser();
-            Image userImage = new Image();
-            try
+
+            if (user.IsLoggedIn)
             {
-                userImage.ImageByteArray = user.ProfileImage;
-                userImage.ImageBase64 = ConvertByteArrayToBase64(userImage.ImageByteArray);
-                userImage.ImageSource = ReturnImageSource(userImage.ImageBase64);
+                Image userImage = new Image();
+                try
+                {
+                    userImage.ImageByteArray = user.ProfileImage;
+                    userImage.ImageBase64 = ConvertByteArrayToBase64(userImage.ImageByteArray);
+                    userImage.ImageSource = ReturnImageSource(userImage.ImageBase64);
+                }
+                catch (Exception)
+                {
+                    //throw;
+                }
+
+                // grab incoming snapshot from the webcam and create a new Image object with the data
+                // var webcamImageFromDataBase = await _context.ImageStore.LastOrDefaultAsync(i => i.ProfileId == user.Id);
+
+                Image webcamImage = new Image();
+                //if (webcamImageFromDataBase.ImageByteArray != null)
+                //{
+                //    webcamImage.ImageByteArray = webcamImageFromDataBase.ImageByteArray;
+                //    webcamImage.ImageBase64 = ConvertByteArrayToBase64(webcamImageFromDataBase.ImageByteArray);
+                //    webcamImage.ImageSource = ReturnImageSource(webcamImage.ImageBase64);
+                //}
+
+                List<Image> images = new List<Image>();
+                images.Add(userImage);
+                images.Add(webcamImage);
+
+                return View(images);
             }
-            catch (Exception)
+            else
             {
-                //throw;
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
             }
-
-            // grab incoming snapshot from the webcam and create a new Image object with the data
-            //var webcamImageFromDataBase = await _context.ImageStore.LastOrDefaultAsync(i => i.ProfileId == user.Id);
-
-            Image webcamImage = new Image();
-            //if (webcamImageFromDataBase.ImageByteArray != null)
-            //{
-            //    webcamImage.ImageByteArray = webcamImageFromDataBase.ImageByteArray;
-            //    webcamImage.ImageBase64 = ConvertByteArrayToBase64(webcamImageFromDataBase.ImageByteArray);
-            //    webcamImage.ImageSource = ReturnImageSource(webcamImage.ImageBase64);
-            //}
-
-            List<Image> images = new List<Image>();
-            images.Add(userImage);
-            images.Add(webcamImage);
-
-            return View(images);
         }
 
         // GET: Faces/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -106,82 +141,90 @@ namespace AlphaFacev2.Controllers
             return View(face);
         }
 
-        // GET: Faces/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
+        //// GET: Faces/Create
+        //public IActionResult Create()
+        //{
+        //    return View();
+        //}
 
-        // POST: Faces/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProfileId,Accuracy,Gender,FaceGuid")] Face face)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(face);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(face);
-        }
+        //// POST: Faces/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,ProfileId,Accuracy,Gender,FaceGuid")] Face face)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _context.Add(face);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(face);
+        //}
 
-        // GET: Faces/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: Faces/Edit/5
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var face = await _context.Face.FindAsync(id);
-            if (face == null)
-            {
-                return NotFound();
-            }
-            return View(face);
-        }
+        //    var face = await _context.Face.FindAsync(id);
+        //    if (face == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(face);
+        //}
 
-        // POST: Faces/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProfileId,Accuracy,Gender,FaceGuid")] Face face)
-        {
-            if (id != face.Id)
-            {
-                return NotFound();
-            }
+        //// POST: Faces/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("Id,ProfileId,Accuracy,Gender,FaceGuid")] Face face)
+        //{
+        //    if (id != face.Id)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(face);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FaceExists(face.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(face);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(face);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!FaceExists(face.Id))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(face);
+        //}
 
         // GET: Faces/Delete/5
+
         public async Task<IActionResult> Delete(int? id)
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -202,33 +245,23 @@ namespace AlphaFacev2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             var face = await _context.Face.FindAsync(id);
             _context.Face.Remove(face);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FaceExists(int id)
-        {
-            return _context.Face.Any(e => e.Id == id);
-        }
-
-        private static string ReturnImageSource(string base64)
-        {
-            return String.Format("data:image/jpg;base64,{0}", base64);
-        }
-
-        public string ConvertByteArrayToBase64(byte[] byteArray)
-        {
-            var base64 = Convert.ToBase64String(byteArray);
-            return base64;
-        }
-
-        public byte[] ConvertBase64ToByteArray(string base64Image)
-        {
-            var byteArray = Convert.FromBase64String(base64Image);
-            return byteArray;
-        }
+        //private bool FaceExists(int id)
+        //{
+        //    return _context.Face.Any(e => e.Id == id);
+        //}
 
         public async Task<IActionResult> PostProfilePicture(IFormFile file)
         {
@@ -574,6 +607,23 @@ namespace AlphaFacev2.Controllers
             {
                 throw;
             }
+        }
+
+        private static string ReturnImageSource(string base64)
+        {
+            return String.Format("data:image/jpg;base64,{0}", base64);
+        }
+
+        public string ConvertByteArrayToBase64(byte[] byteArray)
+        {
+            var base64 = Convert.ToBase64String(byteArray);
+            return base64;
+        }
+
+        public byte[] ConvertBase64ToByteArray(string base64Image)
+        {
+            var byteArray = Convert.FromBase64String(base64Image);
+            return byteArray;
         }
     }
 }

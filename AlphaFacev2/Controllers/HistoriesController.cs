@@ -7,21 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AlphaFacev2.Models;
 using Microsoft.AspNetCore.Authorization;
+using AlphaFacev2.Services;
 
 namespace AlphaFacev2.Controllers
 {
     public class HistoriesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly AccountServices _accountServices;
 
-        public HistoriesController(AppDbContext context)
+        public HistoriesController(AppDbContext context, AccountServices accountServices)
         {
             _context = context;
+            _accountServices = accountServices;
         }
 
         // GET: Histories
         public async Task<IActionResult> Index()
         {
+            var user = _accountServices.GetCurrentUser();
+
+            if (user.IsLoggedIn != true)
+            {
+                return RedirectToAction(nameof(ProfilesController.Login), "Profiles");
+            }
+
             return View(await _context.History.ToListAsync());
         }
 

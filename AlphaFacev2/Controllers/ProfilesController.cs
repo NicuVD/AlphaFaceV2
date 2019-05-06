@@ -58,6 +58,10 @@ namespace AlphaFacev2.Controllers
             {
                 History lastLogin = _context.History.LastOrDefault(l => l.IsActionSuccess == true);
                 user = await _context.Profile.FirstOrDefaultAsync(p => p.UserName == lastLogin.Username);
+                if (user.IsLoggedIn == false)
+                {
+                    return RedirectToAction(nameof(Login));
+                }
             }
             else
             {
@@ -107,6 +111,11 @@ namespace AlphaFacev2.Controllers
             {
                 return NotFound();
             }
+            if (profile.IsLoggedIn == false)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
             return View(profile);
         }
 
@@ -127,35 +136,42 @@ namespace AlphaFacev2.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Profile.FirstOrDefaultAsync(u => u.Id == profile.Id);
-                if (profile.Password == user.Password)
+                if (user.IsLoggedIn)
                 {
-                    user.FirstName = profile.FirstName;
-                    user.LastName = profile.LastName;
-                    user.DateOfBirth = profile.DateOfBirth;
-                    user.Gender = profile.Gender;
-                    user.Email = profile.Email;
-                    user.UserName = profile.Email;
-
-                    await Logout();
-                    await LoginAsync(user);
-
-                    try
+                    if (profile.Password == user.Password)
                     {
-                        _context.Profile.Update(user);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!ProfileExists(profile.Id))
+                        user.FirstName = profile.FirstName;
+                        user.LastName = profile.LastName;
+                        user.DateOfBirth = profile.DateOfBirth;
+                        user.Gender = profile.Gender;
+                        user.Email = profile.Email;
+                        user.UserName = profile.Email;
+
+                        await Logout();
+                        await LoginAsync(user);
+
+                        try
                         {
-                            return NotFound();
+                            _context.Profile.Update(user);
+                            await _context.SaveChangesAsync();
                         }
-                        else
+                        catch (DbUpdateConcurrencyException)
                         {
-                            throw;
+                            if (!ProfileExists(profile.Id))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
                         }
+                        return RedirectToAction(nameof(Details));
                     }
-                    return RedirectToAction(nameof(Details));
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Login));
                 }
             }
             return RedirectToAction("Details");
@@ -175,6 +191,10 @@ namespace AlphaFacev2.Controllers
             {
                 return NotFound();
             }
+            if (profile.IsLoggedIn == false)
+            {
+                return RedirectToAction(nameof(Login));
+            }
 
             return View(profile);
         }
@@ -186,24 +206,42 @@ namespace AlphaFacev2.Controllers
         {
             var profile = await _context.Profile.FindAsync(id);
 
-            var histories = await _context.History.ToListAsync();
-
-            if (profile.IsLoggedIn == true)
+            if (profile.IsLoggedIn)
             {
-                await Logout();
-            }
+                var histories = await _context.History.ToListAsync();
 
-            foreach (var item in histories)
-            {
-                if (item.Username == profile.UserName)
+                var faces = await _context.Face.ToListAsync();
+
+                if (profile.IsLoggedIn == true)
                 {
-                    _context.History.Remove(item);
+                    await Logout();
                 }
-            }
 
-            _context.Profile.Remove(profile);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), "Home");
+                foreach (var item in histories)
+                {
+                    if (item.Username == profile.UserName)
+                    {
+                        _context.History.Remove(item);
+                    }
+                }
+
+                foreach (var item in faces)
+                {
+                    if (item.Id == profile.Id)
+                    {
+                        _context.Face.Remove(item);
+                    }
+                }
+
+                _context.Profile.Remove(profile);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index), "Home");
+            }
+            else
+            {
+                return RedirectToAction(nameof(Login));
+            }
         }
 
         private bool ProfileExists(int id)
@@ -234,7 +272,6 @@ namespace AlphaFacev2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> RegisterAsync([Bind("FirstName,LastName,DateOfBirth,Gender,Email,Password,ConfirmPassword")] Profile user)
         {
             if (ModelState.IsValid)
@@ -277,7 +314,6 @@ namespace AlphaFacev2.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> LoginAsync([Bind("Email, Password")]Profile user)
         {
             if (_context.Profile.Count(p => p.Email == user.Email) > 0)
@@ -303,8 +339,7 @@ namespace AlphaFacev2.Controllers
                         _context.Profile.Update(user);
                         await _context.SaveChangesAsync();
 
-                        HttpContext.Session.SetString("UserID", account.Id.ToString());
-                        HttpContext.Session.SetString("UserName", account.UserName);
+                        SetContextOnLoginOrRegister(account);
 
                         return RedirectToAction(nameof(Index), "Home");
                     }
@@ -320,6 +355,12 @@ namespace AlphaFacev2.Controllers
             }
 
             return RedirectToAction("Login");
+        }
+
+        private void SetContextOnLoginOrRegister(Profile user)
+        {
+            HttpContext.Session.SetString("FirstName", user.FirstName);
+            HttpContext.Session.SetString("UserName", user.UserName);
         }
 
         [HttpGet]
@@ -368,8 +409,7 @@ namespace AlphaFacev2.Controllers
                         _context.Profile.Update(user);
                         await _context.SaveChangesAsync();
 
-                        HttpContext.Session.SetString("UserID", account.Id.ToString());
-                        HttpContext.Session.SetString("UserName", account.UserName);
+                        SetContextOnLoginOrRegister(account);
 
                         return RedirectToAction(nameof(Index), "Home");
                     }
@@ -402,18 +442,18 @@ namespace AlphaFacev2.Controllers
             return historyEntry;
         }
 
-        public IActionResult Welcome()
-        {
-            if (HttpContext.Session.GetString("UserID") != null)
-            {
-                ViewBag.Username = HttpContext.Session.GetString("UserName");
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Login");
-            }
-        }
+        //public IActionResult Welcome()
+        //{
+        //    if (HttpContext.Session.GetString("UserID") != null)
+        //    {
+        //        ViewBag.Username = HttpContext.Session.GetString("UserName");
+        //        return View();
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Login");
+        //    }
+        //}
 
         public async Task<IActionResult> Logout()
         {
@@ -456,8 +496,7 @@ namespace AlphaFacev2.Controllers
 
                 if (user.IsLoggedIn == true)
                 {
-                    HttpContext.Session.SetString("UserID", user.Id.ToString());
-                    HttpContext.Session.SetString("UserName", user.UserName);
+                    SetContextOnLoginOrRegister(user);
 
                     return user;
                 }
@@ -494,9 +533,8 @@ namespace AlphaFacev2.Controllers
             profileToUpdate.ProfileImage = imageByteArray;
             _context.Update<Profile>(profileToUpdate);
             await _context.SaveChangesAsync();
-            // -----------------------------------------------
+            
             StatusMessage = "Your profile picture has been updated";
-            //return RedirectToRoute("Index","/Identity/Account/Manage");
             return RedirectToAction("Index", "Profiles");
         }
     }

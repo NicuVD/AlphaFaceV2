@@ -1,17 +1,120 @@
-﻿@{
+﻿@model AlphaFacev2.Models.Feedback
+
+@using Microsoft.AspNetCore.Http
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-    <div class="text-center">
-        <h2 class="display-4">Facial recognition: It's time for action</h2>
-        <hr />
-        <h6>This a face recognition project of Team Alpha.</h6>
-        <h5>The project uses the <a href="https://azure.microsoft.com/en-us/services/cognitive-services/face/">Face API</a> from <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft Cognitive Services</a>.</h5>
-        <hr style="max-width:450px" />
-        <h5><a asp-controller="Profiles" asp-action="Register">Register</a> or <a asp-controller="Profiles" asp-action="Login">Login</a> to find out more!</h5>
-        <hr style="max-width:450px" />
-        <div>
-            <img src="https://1gew6o3qn6vx9kp3s42ge0y1-wpengine.netdna-ssl.com/wp-content/uploads/prod/sites/5/2018/12/facial_recognition_action.jpg" alt="Face recognition of various people" width="80%">
-            <p style="text-align:right; font-size:small; font-style:italic">Source: blogs.microsoft.com</p>
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+    <div class="w3-display-middle" style="white-space:nowrap;">
+        <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">LOGO <span class="w3-hide-small">ALPHA</span> TEAM</span>
+    </div>
+</div>
+<p style="text-align:right; font-size:small; font-style:italic">Source: blogs.microsoft.com</p>
+<div class="w3-content w3-container w3-padding-64" id="about">
+    <h2 class="w3-center">AFace Face Authentication</h2>
+    <p class="w3-center"><em>This a face recognition project of Team Alpha</em></p>
+    <p>
+        We have created a fictional "personal" website/blog, and our fictional character is a hobby photographer. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
+        qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p>
+        The project uses the <a href="https://azure.microsoft.com/en-us/services/cognitive-services/face/">Face API</a> from <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft Cognitive Services</a>.
+    </p>
+
+    <div class="w3-row">
+        @if (Context.Session.GetString("FirstName") != null)
+        {
+            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Details">Hello @Context.Session.GetString("FirstName")!</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> try a face comparison </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Faces" asp-action="Index">AFACE</a>
+        }
+        else
+        {
+            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Register">REGISTER</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> to find out more </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Login">LOGIN</a>
+        }
+    </div>
+
+    <div class="w3-row">
+        <div class="w3-col m6 w3-center w3-padding-large">
+            <p><b><i class="fa fa-user w3-margin-right"></i>The Team</b></p><br>
+            <img src="~/images/Team.jpg" class="w3-round w3-image w3-opacity w3-hover-opacity-off" alt="Photo of Us" width="500" height="333">
+        </div>
+
+        <!-- Hide this text on small devices -->
+        <div class="w3-col m6 w3-hide-small w3-padding-large">
+            <p>
+                Welcome to our website! ""MUST BE CHANGED""
+                We are a team of enthusiastic developers and entrepreneurs who decided to convert their common experience into this web store. We hope you’ll like it as much as we do, and have a great shopping experience here. Our prime goal is creating a shop in which you can easily find whatever product you need. ...
+            </p>
         </div>
     </div>
+    <p class="w3-large w3-center w3-padding-16">We are really good at:</p>
+    <p class="w3-letter-spacing-small"><i class="fa fa-lightbulb-o"></i>Implementing ideas</p>
+    <div class="w3-light-grey">
+        <div class="w3-container w3-padding-small w3-dark-grey w3-center" style="width:90%">90%</div>
+    </div>
+    <p class="w3-letter-spacing-small"><i class="fa fa-briefcase"></i>Business logic</p>
+    <div class="w3-light-grey">
+        <div class="w3-container w3-padding-small w3-dark-grey w3-center" style="width:85%">85%</div>
+    </div>
+    <p class="w3-letter-spacing-small"><i class="fa fa-laptop"></i>Web Design</p>
+    <div class="w3-light-grey">
+        <div class="w3-container w3-padding-small w3-dark-grey w3-center" style="width:75%">75%</div>
+    </div>
+    <p></p>
+    <div class="w3-row w3-center w3-dark-grey w3-padding-16">
+        <div class="w3-quarter w3-section">
+            <span class="w3-xlarge">2+</span><br>
+            Partners
+        </div>
+        <div class="w3-quarter w3-section">
+            <span class="w3-xlarge">1+</span><br>
+            Projects Done
+        </div>
+        <div class="w3-quarter w3-section">
+            <span class="w3-xlarge">1+</span><br>
+            Happy Teachers
+        </div>
+        <div class="w3-quarter w3-section">
+            <span class="w3-xlarge">4+</span><br>
+            Meetings
+        </div>
+    </div>
+
+    <div class="w3-content w3-container w3-padding-64" id="contact">
+        <h3 class="w3-center">WHERE WE WORK</h3>
+        <p class="w3-center"><em>We'd love your feedback!</em></p>
+
+        <div class="w3-row w3-padding-32 w3-section">
+            <div class="w3-col m4 w3-container">
+                <img src="~/images/Cluj-Napoca.jpg" class="w3-image w3-round" style="width:100%">
+            </div>
+            <div class="w3-col m8 w3-panel">
+                <div class="w3-large w3-margin-bottom">
+                    <i class="fa fa-map-marker fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Cluj-Napoca, RO<br>
+                    <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Phone: +40 744 44 55 66<br>
+                    <i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: alphateam@mail.com<br>
+                </div>
+                <p>Swing by for a cup of <i class="fa fa-coffee"></i>, or leave us a note:</p>
+                <form asp-controller="Feedbacks" asp-action="PostMessage" method="post" role="form">
+                    <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+                        <div class="w3-half">
+                            <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+                        </div>
+                        <div class="w3-half">
+                            <input class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
+                        </div>
+                    </div>
+                    <input class="w3-input w3-border" type="text" placeholder="Message" required name="Message">
+                    <div>
+                        <label for="ContactMe">Contact Me </label><input type="checkbox" for="ContactMe" />
+                    </div>
+                    <button class="w3-button w3-black w3-right w3-section" type="submit">
+                        <i class="fa fa-paper-plane"></i> SEND MESSAGE
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div> @*added*@
