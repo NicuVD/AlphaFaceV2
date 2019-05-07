@@ -6,95 +6,56 @@
     ViewData["Title"] = "Index";
 }
 
-<h4>List of profiles</h4>
+<div class="w3-content w3-container w3-padding-64" id="home">
+    <h3 class="w3-center">Our community</h3>
+    <p class="w3-center"><em>Go to <a asp-controller="Profiles" asp-action="Register">Register</a> to join us</em></p><br>
 
-@*<p>
-    <a asp-controller="Profiles" asp-action="Register">Create a new account</a>
-</p>*@
-<table class="table">
-    <thead>
-        <tr style="font-size:smaller">
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.DateOfBirth)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Gender)
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            @*<th>
-                    @Html.DisplayNameFor(model => model.UserName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IpAdress)
-                </th>*@
-            <th>
-                @Html.DisplayNameFor(model => model.ProfileImage)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+    <!-- Responsive Grid. Three columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
+    <div class="w3-row-padding w3-center">
+
         @foreach (var item in Model)
         {
-            <tr style="height:auto; font-size:smaller">
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.DateOfBirth)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Gender)
-                    </td>*@
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.UserName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IpAdress)
-                    </td>*@
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.ProfileImage)
-                    </td>*@
-                <td align="center">
-                    @{
-                        byte[] byteArray = new byte[1];
-                        if (item.ProfileImage == null)
+
+            byte[] byteArray = new byte[1];
+            if (item.ProfileImage == null)
+            {
+                byteArray[0] = 0;
+            }
+            else
+            {
+                byteArray = item.ProfileImage;
+            }
+            var base64 = Convert.ToBase64String(byteArray);
+            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+            var user = accountServices.GetCurrentUser();
+
+            <div class="w3-col l4 w3-panel">
+                <div class="w3-card w3-white">
+                    <div class="w3-container" style="height:400px;">
+                        <h4 class="w3-center">@Html.DisplayFor(modelItem => item.FirstName)'s Profile</h4>
+                        @if (item.ProfileImage != null)
                         {
-                            byteArray[0] = 0;
+                            <p class="w3-center "><img src="@imgSrc" class="w3-round-large" style="height:120px;" alt="Profile picture"></p>
                         }
                         else
                         {
-                            byteArray = item.ProfileImage;
+                            <p class="w3-center"><img src="~/images/no-profile-pic.jpg" class="w3-round-large" style="height:120px" alt="Profile picture"></p>
                         }
-                        var base64 = Convert.ToBase64String(byteArray);
-                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
-                    }
-                    <img src="@imgSrc" alt="Profile Picture" height="100" />
-                </td>
-                <td>
-                    @{
-                        var user = accountServices.GetCurrentUser();
-                        if (user.UserName == item.UserName)
-                        {
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        }
-                    }
-                </td>
-            </tr>
+                        <hr>
+                        <p><i class="fa fa-user fa-fw w3-text-theme"></i> @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)</p>
+                        <p><i class="fa fa-birthday-cake fa-fw w3-text-theme"></i> @Html.DisplayFor(modelItem => item.DateOfBirth)</p>
+                        <p><i class="fa fa-envelope fa-fw w3-text-theme"></i> @Html.DisplayFor(modelItem => item.Email)</p>
+                        <p>
+                            @if (user.UserName == item.UserName)
+                            {
+                                <i class="fa fa-search fa-fw w3-text-theme"></i>
+                                <a asp-action="Details" asp-route-id="@item.Id"> Details</a>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>

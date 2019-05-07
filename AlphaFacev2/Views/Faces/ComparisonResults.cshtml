@@ -10,37 +10,32 @@
     var user = accountServices.GetCurrentUser();
 }
 
-<h5>@user.FirstName's comparison results history</h5>
-<table class="table">
-    <thead>
-        <tr style="font-size:smaller; text-align:center">
-            <th>
-                Profile picture
-            </th>
-            <th>
-                Comparison picture
-            </th>
-            <th>
-                Is identical?
-            </th>
-            <th>
-                Confidence
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            if (item.ProfileId == user.Id)
-            {
-                <tr style="height:auto; font-size:smaller; text-align:center">
+<div class="w3-padding-32"></div>
+
+<div class="w3-content w3-container w3-padding-32 w3-card" id="home">
+    <h3 class="w3-center">@user.FirstName's comparison results history</h3>
+</div>
+<p></p>
+@foreach (var item in Model)
+{
+    if (item.ProfileId == user.Id)
+    {
+        <div class="w3-content w3-container w3-padding-16 w3-card" id="home">
+            <table class="w3-table w3-centered">
+                <tr>
+                    <th>Profile picture</th>
+                    <th>Comparison picture</th>
+                    <th>Is you?</th>
+                    <th>Confidence</th>
+                </tr>
+                <tr>
                     <td>
                         @{
                             var byteArray = item.ProfileImage;
                             var base64 = Convert.ToBase64String(byteArray);
                             var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
                         }
-                        <img src="@imgSrc" alt="Profile Picture" height="100" />
+                        <img src="@imgSrc" class="w3-round-large" style="height:120px;" alt="Profile picture">
                     </td>
                     <td>
                         @{
@@ -48,27 +43,29 @@
                             var base642 = Convert.ToBase64String(byteArray2);
                             var imgSrc2 = String.Format("data:image/jpg;base64,{0}", base642);
                         }
-                        <img src="@imgSrc2" alt="Profile Picture" height="100" />
+                        <img src="@imgSrc2" class="w3-round-large" style="height:120px;" alt="Profile picture">
                     </td>
                     <td>
                         @{
                             if (item.IsIdentical == true)
                             {
-                                @:True
+                                @:Yes
                             }
                             else
                             {
-                                @:False
+                                @:No
                             }
                         }
-                        @*@Html.DisplayFor(modelItem => item.IsIdentical)*@
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Confidence)
+                        @{ 
+                            var confidence = $"{item.Confidence:P1}";
+                        }
+                        @confidence
                     </td>
                 </tr>
-            }
-        }
-    </tbody>
-</table>
-
+            </table>
+        </div>
+        <p></p>
+    }
+}

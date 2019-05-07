@@ -4,7 +4,6 @@
 
 @{
     var user = accountServices.GetCurrentUser();
-    <h4>@user.FirstName's login history</h4>
 }
 
 @{
@@ -12,26 +11,16 @@
 
 }
 
+<div class="w3-padding-32"></div>
 
-<table class="table">
-    <thead>
+<div class="w3-content w3-container w3-padding-32 w3-card" id="home">
+    <h3 class="w3-center">@user.FirstName's login history</h3>
+    <table class="w3-table w3-striped">
         <tr>
-            <th>
-                <h6>Login Time</h6>
-                @*@Html.DisplayNameFor(model => model.LoginTime)*@
-            </th>
-            <th>
-                <h6>Login success</h6>
-                @*@Html.DisplayNameFor(model => model.IsActionSuccess)*@
-            </th>
-            <th>
-                <h6>IP Address</h6>
-                @*@Html.DisplayNameFor(model => model.IpAddress)*@
-            </th>
-            <th></th>
+            <th>Login Time</th>
+            <th>Login success</th>
+            <th>IP Address</th>
         </tr>
-    </thead>
-    <tbody>
         @{
             foreach (var item in Model)
             {
@@ -59,6 +48,5 @@
                 }
             }
         }
-
-    </tbody>
-</table>
+    </table>
+</div>

@@ -32,19 +32,19 @@
 <body>
     <div class="w3-top">
         <div class="w3-bar w3-white" id="myNavbar">
-            <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+            <a class="w3-bar-item w3-button w3-hover-black w3-hide-small w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
                 <i class="fa fa-bars"></i>
             </a>
             <a class="w3-bar-item w3-button" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
-            <a href="#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-book"></i> ABOUT</a>
-            <a href="#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+            <a href="~/Home/Index/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-book"></i> ABOUT</a>
+            <a href="~/Home/Index/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
 
             @{ var user = accountServices.GetCurrentUser();
                 if (user.UserName != null)
                 {
-                    <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Faces" asp-action="Index"><i class="fa fa-eye"></i> AFACE</a>
                     <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Profiles" asp-action="Index"><i class="fa fa-users"></i> PROFILES</a>
                     <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Histories" asp-action="Index"><i class="fa fa-history"></i> HISTORY</a>
+                    <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Faces" asp-action="Index"><i class="fa fa-eye"></i> AFACE</a>
                     <a class="w3-bar-item w3-button w3-hide-small" asp-area="" asp-controller="Faces" asp-action="ComparisonResults"><i class="fa fa-id-badge"></i> FACES</a>
                 }
             }
@@ -60,8 +60,8 @@
                 <a class="w3-bar-item w3-button w3-hide-small w3-right" asp-area="" asp-controller="Profiles" asp-action="Register"><i class="fa fa-envelope"></i> REGISTER</a>
             }
             @*<a href="#" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">
-                <i class="fa fa-search"></i>
-            </a>*@
+            <i class="fa fa-search"></i>
+        </a>*@
         </div>
 
         @*NEEDS TO BE REDONE ACCORDING TO THE ABOVE*@
@@ -81,11 +81,11 @@
         </main>
     </div>
 
-    <footer class="w3-center w3-black w3-padding-64 w3-opacity w3-hover-opacity-off">
+    <footer class="w3-center w3-padding-64 w3-black w3-opacity w3-hover-opacity-off">
         <a href="#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
         <div class="container" style="font-size:small; text-align:center">
             &copy; 2019  Alpha Team |
-            <a asp-area="" asp-controller="Feedback" asp-action="Index">Contact</a> |
+            <a href="~/Home/Index/#contact">Contact</a> |
             <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> |
             <a asp-area="" asp-controller="Feedbacks" asp-action="Index">Feedback</a>
         </div>
@@ -108,7 +108,7 @@
             window.onscroll = function () { myFunction() };
             function myFunction() {
                 var navbar = document.getElementById("myNavbar");
-                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                if (document.body.scrollTop > 30 || document.documentElement.scrollTop > 30) {
                     navbar.className = "w3-bar" + " w3-card" + " w3-animate-top" + " w3-white";
                 } else {
                     navbar.className = navbar.className.replace(" w3-card w3-animate-top w3-white", "");
