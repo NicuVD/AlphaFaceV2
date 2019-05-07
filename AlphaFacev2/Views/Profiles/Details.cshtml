@@ -3,93 +3,87 @@
 @inject AlphaFacev2.Services.AccountServices  accountServices
 
 @{
+    var user = accountServices.GetCurrentUser();
+}
+
+@{
     ViewData["Title"] = "Details";
 }
 
-@*<h1>Details</h1>*@
+<div class="w3-padding-16"></div>
 
-<div>
-    <h4>@Model.FirstName's Profile</h4>
-    <hr />
-    <div class="column" style="width:400px">
-        <form id="profile-form" method="post">
-            @{
-                var user = accountServices.GetCurrentUser();
-
-                if (user.ProfileImage == null)
-                {
-
-                    <div style="border:solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Face">Upload a picture for AFace authentication</a>
-                    </div>
-                }
-                else
-                {
-                    <div style="border:solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Index">Do a AFace comparison using curent profile picture</a>
-                    </div>
-                }
-            }
-            <br />
-        </form>
-        <dl class="row">
-            <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.FirstName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.FirstName)
-            </dd>
-            <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.LastName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.LastName)
-            </dd>
-            <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.DateOfBirth)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.DateOfBirth)
-            </dd>
-            @*<dt class="col-sm-4">
-                    @Html.DisplayNameFor(model => model.Gender)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Gender)
-                </dd>*@
-            <dt class="col-sm-4">
-                @Html.DisplayNameFor(model => model.Email)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Email)
-            </dd>
-            @*<dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ProfileImage)
-                </dd>*@
-        </dl>
-        <div>
-            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
-        </div>
-    </div>
-    <div class="column" style="width:60px"></div>
-    <div class="column">
-        @{
-            byte[] byteArray = new byte[1];
-            if (Model.ProfileImage == null)
-            {
-                byteArray[0] = 0;
-            }
-            else
-            {
-                byteArray = Model.ProfileImage;
-            }
-            var base64 = Convert.ToBase64String(byteArray);
-            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
-        }
-        <img src="@imgSrc" alt="Profile Picture" height="320" />
-    </div>
-
-
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">Hello @user.FirstName!</h3>
 </div>
 
+<div class="w3-padding-16 w3-center">
+    <div class="w3-row">
+        <div class="w3-half w3-black w3-container w3-center" style="height:500px">
+            <div class="w3-padding-16">
+                <h1>Profile picture</h1>
+            </div>
+            <div class="w3-padding-16">
+                @{
+                    var byteArray = user.ProfileImage;
+                    var base64 = Convert.ToBase64String(byteArray);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                }
+                <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+            </div>
+        </div>
+
+        <div class="w3-half w3-black w3-container w3-opacity-min" style="height:500px">
+            <div class="w3-padding-16">
+                <h1>Personal information</h1>
+            </div>
+            <div class="w3-padding-16">
+                <table class="w3-table">
+                    <tbody>
+                        <tr>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>First Name</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.FirstName</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Last Name</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.LastName</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Birthday</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.DateOfBirth</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Email</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.Email</td>
+                        </tr>
+                        <tr><td></td></tr>
+                        <tr><td></td></tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center">
+                                <a class="w3-margin-left w3-padding-large w3-blue-grey w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:center">
+                                <a class="w3-margin-left w3-padding-large w3-blue-grey w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @{
+        if (user.ProfileImage == null)
+        {
+            <form method="post" asp-controller="Faces" asp-action="Face" style="text-align:left">
+                <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to upload a picture for AFace authentication!" style="width:100%; height:80px; font-size:larger;">
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-controller="Faces" asp-action="Index" style="text-align:left">
+                <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to do a AFace comparison using curent profile picture!" style="width:100%; height:80px; font-size:larger;">
+            </form>
+        }
+    }
+</div>

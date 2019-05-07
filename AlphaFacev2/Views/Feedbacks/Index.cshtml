@@ -1,10 +1,44 @@
 ﻿@model AlphaFacev2.Models.Feedback
 
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
+@{
+    var user = accountServices.GetCurrentUser();
+}
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<form asp-action="Index" method="post" class="form-horizontal" role="form">
+<div class="w3-padding-16"></div>
+
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">We'd love to here your opinion!</h3>
+</div>
+
+<div class="w3-content w3-container w3-padding-16" style="width:80%" id="feedback">
+    <form asp-controller="Feedbacks" asp-action="PostMessage" method="post" role="form">
+        <div class="w3-row-padding w3-padding-16" style="margin:0 -16px 8px -16px">
+            <div class="w3-half">
+                <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+            </div>
+            <div class="w3-half">
+                <input class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
+            </div>
+        </div>
+        <textarea class="w3-input w3-border w3-padding-16" type="text" placeholder="Message" required name="Message" style="min-height:200px"></textarea>
+        <div class="w3-padding-16">
+            <input class="w3-check" type="checkbox" for="ContactMe" value="ContactMe" />
+            <label class="w3-large w3-margin-bottom" for="ContactMe">Contact Us</label>
+        </div>
+        <button class="w3-button w3-black w3-right w3-section" type="submit">
+            <i class="fa fa-paper-plane"></i> SEND FEEDBACK
+        </button>
+    </form>
+</div>
+
+
+@*<form asp-action="Index" method="post" class="form-horizontal" role="form">
 
     <div asp-validation-summary="All" class="text-danger"></div>
 
@@ -44,4 +78,5 @@
             <input type="submit" class="btn btn-primary" value="Send feedback" />
         </div>
     </div>
-</form>
+</form>*@
+
