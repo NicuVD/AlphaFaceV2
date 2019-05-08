@@ -25,15 +25,31 @@
             </div>
             <div class="w3-padding-16">
                 @{
-                    var byteArray = user.ProfileImage;
+                    byte[] byteArray = new byte[1];
+                    if (user.ProfileImage == null)
+                    {
+                        byteArray[0] = 0;
+                    }
+                    else
+                    {
+                        byteArray = user.ProfileImage;
+                    }
                     var base64 = Convert.ToBase64String(byteArray);
                     var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
                 }
-                <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+
+                @if (user.ProfileImage != null)
+                {
+                    <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+                }
+                else
+                {
+                    <img src="~/images/no-profile-pic.jpg" style="height:320px;" alt="Profile picture">
+                }
             </div>
         </div>
 
-        <div class="w3-half w3-black w3-container w3-opacity-min" style="height:500px">
+        <div class="w3-half w3-dark-grey w3-container" style="height:500px">
             <div class="w3-padding-16">
                 <h1>Personal information</h1>
             </div>

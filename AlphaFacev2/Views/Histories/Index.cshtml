@@ -14,14 +14,14 @@
 <div class="w3-padding-16"></div>
 
 <div class="w3-content w3-container w3-padding-16" id="home">
-    <h3 class="w3-center">@user.FirstName's login history</h3>
+    <h3 class="w3-center">Your login history</h3>
     <p class="w3-center"><em>On this page you can see your login activity!</em></p>
 </div>
 
-<div class="w3-content w3-container w3-padding-16 w3-card" id="home">
+<div class="w3-content w3-black w3-container w3-padding-16 w3-card" id="home">
     
-    <table class="w3-table w3-striped">
-        <tr>
+    <table class="w3-table w3-hoverable w3-text-white">
+        <tr class="w3-hover-text-black">
             <th>Login Time</th>
             <th>Login success</th>
             <th>IP Address</th>
@@ -31,7 +31,7 @@
             {
                 if (item.Username == user.UserName)
                 {
-                    <tr>
+                    <tr class="w3-hover-text-black">
                         <td>
                             @Html.DisplayFor(modelItem => item.LoginTime)
                         </td>
@@ -55,3 +55,4 @@
         }
     </table>
 </div>
+<p></p>

@@ -13,7 +13,7 @@
 <div class="w3-padding-16"></div>
 
 <div class="w3-content w3-container w3-padding-16" id="home">
-    <h3 class="w3-center">@user.FirstName's comparison results history</h3>
+    <h3 class="w3-center">Your comparison results history</h3>
     <p class="w3-center"><em>On this page you can see your face comparison history!</em></p>
 </div>
 <p></p>
@@ -21,15 +21,15 @@
 {
     if (item.ProfileId == user.Id)
     {
-        <div class="w3-content w3-container w3-padding-16 w3-card" id="home">
-            <table class="w3-table w3-centered">
+        <div class="w3-content w3-black w3-container w3-padding-16 w3-card" id="home">
+            <table class="w3-table w3-centered w3-text-white">
                 <tr>
                     <th>Profile picture</th>
                     <th>Comparison picture</th>
                     <th>It's you?</th>
                     <th>Confidence</th>
                 </tr>
-                <tr>
+                <tr style="vertical-align:middle">
                     <td>
                         @{
                             var byteArray = item.ProfileImage;
@@ -46,7 +46,7 @@
                         }
                         <img src="@imgSrc2" class="w3-round-large" style="height:120px;" alt="Profile picture">
                     </td>
-                    <td>
+                    <td class="w3-xlarge" style="vertical-align:middle;">
                         @{
                             if (item.IsIdentical == true)
                             {
@@ -58,7 +58,7 @@
                             }
                         }
                     </td>
-                    <td>
+                    <td class="w3-xlarge" style="vertical-align:middle">
                         @{ 
                             var confidence = $"{item.Confidence:P1}";
                         }
