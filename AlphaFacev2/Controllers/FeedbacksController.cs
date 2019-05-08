@@ -20,7 +20,6 @@ namespace AlphaFacev2.Controllers
             return View();
         }
 
-        [Authorize]
         [HttpPost]
         public IActionResult PostFeedback(Feedback feedback)
         {

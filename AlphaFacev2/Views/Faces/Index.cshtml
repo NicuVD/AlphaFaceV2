@@ -15,45 +15,69 @@
 
 <div class="w3-content w3-container w3-padding-16" id="home">
     <h3 class="w3-center">Do a face comparison!</h3>
-    <p class="w3-center"> Take a picture with your webcam and then press <em>Compare pictures</em>!</p>
+    <p class="w3-center"><em>Take a picture with your webcam and then press compare pictures!</em></p>
 </div>
 
 <!-- First Grid: Logo & About -->
 <div class="w3-padding-16 w3-center">
     <div class="w3-row">
-        <div class="w3-half w3-black w3-container w3-center" style="height:500px">
+        <div class="w3-half w3-black w3-container w3-center" style="height:600px">
             <div class="w3-padding-16">
                 <h1>Profile picture</h1>
             </div>
             <div class="w3-padding-16">
                 @{
-                    var byteArray = user.ProfileImage;
+                    byte[] byteArray = new byte[1];
+                    if (user.ProfileImage == null)
+                    {
+                        byteArray[0] = 0;
+                    }
+                    else
+                    {
+                        byteArray = user.ProfileImage;
+                    }
                     var base64 = Convert.ToBase64String(byteArray);
                     var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
                 }
-                <img src="@imgSrc" style="height:240px;" alt="Profile picture">
+
+                @if (user.ProfileImage != null)
+                {
+                    <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+                }
+                else
+                {
+                    <img src="~/images/no-profile-pic.jpg" style="height:320px;" alt="Profile picture">
+                }
             </div>
         </div>
 
-        <div class="w3-half w3-black w3-container w3-opacity-min" style="height:500px">
-            <div class="w3-padding-16 w3-center">
-                <h1>Webcam picture</h1>
+        <div class="w3-half w3-dark-grey w3-container w3-center" style="height:600px">
+            <div class="w3-padding-16">
+                <div>
+                    <h1>Webcam picture</h1>
+                </div>
                 <div class="w3-padding-16">
-                    <div class="w3-center" style="height:240px;" alt="Webcam picture" id="results">
+                    <div class="w3-center" style="height:320px;" alt="Webcam picture">
                         <section>
                             <div>
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div id="my_camera"></div>
-                                        <!-- A button for taking snaps -->
-                                        <div>
-                                            <br />
-                                            <form>
-                                                <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
-                                            </form>
-                                        </div>
+                                <div class="w3-center w3-panel">
+                                    <div style="margin: 0% 0% 0% 17%" id="my_camera"></div>
+                                    <!-- A button for taking snaps -->
+                                    <div>
+                                        <br />
+
                                     </div>
                                 </div>
+                                <form>
+                                    <div>
+                                        <input id="pre_take_buttons" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width:400px" value="Take Snapshot" onClick="preview_snapshot()">
+                                        <h6><i id="picture_Uploaded"></i></h6>
+                                    </div>
+                                    <div id="post_take_buttons" style="display: none;">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width:200px" value="Take Another" onclick="cancel_preview()">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width:200px" value="Save Photo" onclick="save_photo()">
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-md-2">    </div>
                             <!-- First, include the Webcam.js JavaScript Library -->
@@ -61,28 +85,66 @@
                             <!-- Configure a few settings and attach camera -->
                             <script language="JavaScript">
                                 Webcam.set({
-                                    width: 320,
-                                    height: 240,
+                                    width: 427.2,
+                                    height: 320,
                                     image_format: 'jpeg',
-                                    jpeg_quality: 100
+                                    jpeg_quality: 100,
+                                    flip_horiz: true
                                 });
                                 Webcam.attach('#my_camera');
                             </script>
 
                             <!-- Code to handle taking the snapshot and displaying it locally -->
                             <script language="JavaScript">
-                                function take_snapshot() {
-                                    // take snapshot and get image data
+                                function preview_snapshot() {
+                                    // freeze camera so user can preview pic
+                                    Webcam.freeze();
+
+                                    // swap button sets
+                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('post_take_buttons').style.display = '';
+                                    document.getElementById('picture_Uploaded').innerHTML = '';
+                                }
+
+                                function cancel_preview() {
+                                    // cancel preview freeze and return to live camera feed
+                                    Webcam.unfreeze();
+
+                                    // swap buttons back
+                                    document.getElementById('pre_take_buttons').style.display = '';
+                                    document.getElementById('post_take_buttons').style.display = 'none';
+                                }
+
+                                function save_photo() {
+                                    // actually snap photo (from preview freeze) and display it
                                     Webcam.snap(function (data_uri) {
-                                        // display results in page
-                                        document.getElementById('results').innerHTML =
-                                            '<img src="' + data_uri + '"/>';
+                                        //// display results in page
+                                        //document.getElementById('results').innerHTML =
+                                        //    '<img src="' + data_uri + '"/>';
 
                                         Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                                                                                                                        /*alert('Photo Captured')*/;
+                                                                                                                                                                                                                                                                                                                                                                        /*alert('Photo Captured')*/;
                                         });
+
+                                        // swap buttons back and add message for user
+                                        document.getElementById('pre_take_buttons').style.display = '';
+                                        document.getElementById('post_take_buttons').style.display = 'none';
+                                        document.getElementById('picture_Uploaded').innerHTML = 'Your pictures has been uploaded. Click below to compare!';
                                     });
                                 }
+
+                                                                                                            //function take_snapshot() {
+                                                                                                            //    // take snapshot and get image data
+                                                                                                            //    Webcam.snap(function (data_uri) {
+                                                                                                            //        // display results in page
+                                                                                                            //        document.getElementById('results').innerHTML =
+                                                                                                            //            '<img src="' + data_uri + '"/>';
+
+                                                                                                            //        Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
+                                                                                                            //                                                                                                                                                                                                                                                            /*alert('Photo Captured')*/;
+                                                                                                            //        });
+                                                                                                            //    });
+                                                                                                            //}
                             </script>
                         </section>
                     </div>
@@ -90,8 +152,62 @@
             </div>
         </div>
     </div>
-
-        <form method="post" asp-controller="Faces" asp-action="CompareToWebcamPicture" style="text-align:left">
-            <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to compare the pictures!" style="width:100%; height:80px; font-size:larger;">
-        </form>
+    @{
+        if (user.ProfileImage == null)
+        {
+            <form method="post" asp-controller="Faces" asp-action="Face" style="text-align:left">
+                <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to upload a picture for AFace authentication!" style="width:100%; height:80px; font-size:larger;">
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-controller="Faces" asp-action="CompareToWebcamPicture" style="text-align:left">
+                <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to compare the pictures!" style="width:100%; height:80px; font-size:larger;">
+            </form>
+        }
+    }
 </div>
+
+
+@*<form>
+        <div id="pre_take_buttons" style="">
+            <input type="button" value="Take Snapshot" onclick="preview_snapshot()">
+        </div>
+        <div id="post_take_buttons" style="display: none;">
+            <input type="button" value="< Take Another" onclick="cancel_preview()">
+            <input type="button" value="Save Photo >" onclick="save_photo()" style="font-weight:bold;">
+        </div>
+    </form>
+
+    <script language="JavaScript">
+        function preview_snapshot() {
+            // freeze camera so user can preview pic
+            Webcam.freeze();
+
+            // swap button sets
+            document.getElementById('pre_take_buttons').style.display = 'none';
+            document.getElementById('post_take_buttons').style.display = '';
+        }
+
+        function cancel_preview() {
+            // cancel preview freeze and return to live camera feed
+            Webcam.unfreeze();
+
+            // swap buttons back
+            document.getElementById('pre_take_buttons').style.display = '';
+            document.getElementById('post_take_buttons').style.display = 'none';
+        }
+
+        function save_photo() {
+            // actually snap photo (from preview freeze) and display it
+            Webcam.snap(function (data_uri) {
+                // display results in page
+                document.getElementById('results').innerHTML =
+                    '<img src="' + data_uri + '"/>';
+
+                // swap buttons back
+                document.getElementById('pre_take_buttons').style.display = '';
+                document.getElementById('post_take_buttons').style.display = 'none';
+            });
+        }
+    </script>*@
