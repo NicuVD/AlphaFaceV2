@@ -115,9 +115,9 @@
                                         document.getElementById('results').innerHTML =
                                             '<img src="' + data_uri + '"/>';
 
-                                        //Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                        //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                /*alert('Photo Captured')*/;
-                                        //});
+                                        Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /*alert('Photo Captured')*/;
+                                        });
 
                                         // swap buttons back and add message for user
                                         document.getElementById('pre_take_buttons').style.display = 'none';

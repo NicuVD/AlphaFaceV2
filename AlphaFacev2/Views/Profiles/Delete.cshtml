@@ -66,18 +66,22 @@
                         </tr>
                         <tr>
                             <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Birthday</td>
-                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.DateOfBirth</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@{string dob = user.DateOfBirth.Value.ToShortDateString();}@dob</td>
+                        </tr>
+                        <tr>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Gender</td>
+                            <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.Gender</td>
                         </tr>
                         <tr>
                             <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Email</td>
                             <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>@user.Email</td>
                         </tr>
-                        <tr>
-                            <td></td>
-                        </tr>
+                        <tr><td></td></tr>
+                        <tr><td></td></tr>
+                        <tr><td></td></tr>
                         <tr>
                             <td colspan="2" style="text-align:center">
-                                <a class="w3-margin-left w3-padding-large w3-blue-grey w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+                                <a class="w3-margin-left w3-padding-large w3-blue-grey w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width:300px" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
                             </td>
                         </tr>
                     </tbody>

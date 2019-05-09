@@ -394,39 +394,46 @@ namespace AlphaFacev2.Controllers
                 // get result from Microsoft Face API
                 var result = await AFaceCompareUserPictureToWebcamPicture(webcamImage, profileImage);
 
-                // get user account with corresponding email only if Face API returns
-                // that the faces are identical with a confidence of over 0.6
-                Profile account = _context.Profile.FirstOrDefault(
-                    p => (p.Email == user.Email) &&
-                        (result.IsIdentical == true) &&
-                            (result.Confidence >= 0.6));
-
-                if (account != null)
+                if (result != null)
                 {
-                    if (account.IsLoggedIn == false)
-                    {
-                        user = account;
-                        user.IsLoggedIn = true;
-                        loginSucces = true;
-                        isUserLogedIn = true;
-                        historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+                    // get user account with corresponding email only if Face API returns
+                    // that the faces are identical with a confidence of over 0.6
+                    Profile account = _context.Profile.FirstOrDefault(
+                        p => (p.Email == user.Email) &&
+                            (result.IsIdentical == true) &&
+                                (result.Confidence >= 0.6));
 
+                    if (account != null)
+                    {
+                        if (account.IsLoggedIn == false)
+                        {
+                            user = account;
+                            user.IsLoggedIn = true;
+                            loginSucces = true;
+                            isUserLogedIn = true;
+                            historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
+
+                            _context.History.Add(historyEntry);
+                            _context.Profile.Update(user);
+                            await _context.SaveChangesAsync();
+
+                            SetContextOnLoginOrRegister(account);
+
+                            return RedirectToAction(nameof(Index), "Home");
+                        }
+                    }
+                    else
+                    {
+                        historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
                         _context.History.Add(historyEntry);
-                        _context.Profile.Update(user);
                         await _context.SaveChangesAsync();
 
-                        SetContextOnLoginOrRegister(account);
-
-                        return RedirectToAction(nameof(Index), "Home");
+                        ModelState.AddModelError("", "Username is incorrect or image comparison did not work properly!");
                     }
                 }
                 else
                 {
-                    historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLogedIn);
-                    _context.History.Add(historyEntry);
-                    await _context.SaveChangesAsync();
-
-                    ModelState.AddModelError("", "Username is incorrect or image comparison did not work properly!");
+                    return RedirectToAction("LoginAFace");
                 }
             }
 
