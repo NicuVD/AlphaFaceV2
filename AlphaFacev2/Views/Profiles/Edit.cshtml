@@ -67,10 +67,10 @@
                         <tbody>
 
                             <tr>
-                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>First Name</td>
-                                <td>
+                                <td style="min-width:200px"><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>First Name</td>
+                                <td style="min-width:200px">
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="FirstName" class="form-control" />
+                                    <input asp-for="FirstName" class="form-control" required name="First Name"/>
                                     <span asp-validation-for="FirstName" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -78,7 +78,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Last Name</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="LastName" class="form-control" />
+                                    <input asp-for="LastName" class="form-control" required name="Last Name"/>
                                     <span asp-validation-for="LastName" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -86,7 +86,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Birthday</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="DateOfBirth" class="form-control" />
+                                    <input asp-for="DateOfBirth" class="form-control" required name="Bithday"/>
                                     <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -94,7 +94,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Gender</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="Gender" class="form-control" />
+                                    <input asp-for="Gender" class="form-control" required name="Gender"/>
                                     <span asp-validation-for="Gender" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -102,7 +102,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Email</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="Email" class="form-control" />
+                                    <input asp-for="Email" class="form-control" required name="Email"/>
                                     <span asp-validation-for="Email" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -110,7 +110,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Password</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="Password" class="form-control"/>
+                                    <input asp-for="Password" class="form-control" required name="Password"/>
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </td>
                             </tr>
@@ -118,7 +118,7 @@
                                 <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Confirm password</td>
                                 <td>
                                     <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
-                                    <input asp-for="ConfirmPassword" class="form-control"/>
+                                    <input asp-for="ConfirmPassword" class="form-control" required name="ConfirmPassword"/>
                                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                                 </td>
                             </tr>
