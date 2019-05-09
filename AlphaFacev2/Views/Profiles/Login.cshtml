@@ -9,7 +9,9 @@
 
     <div class="w3-panel" style="margin:0px 0px 20px 0px; padding: 0px 0px 0px 0px;">
         <div class="w3-panel" style="width:100%; padding:0px 0px 0px 0px; margin:20px 0px 0px 0px;">
-            <button class="w3-button w3-block w3-blue-grey"> <a asp-controller="Profiles" asp-action="LoginAFace">Login in with <b>AFace authentication</b></a></button>
+            <form method="post" asp-controller="Profiles" asp-action="LoginAFace">
+                <input type="submit" class="w3-button w3-block w3-blue-grey" value="Login in with AFace authentication">
+            </form>
         </div>
     </div>
 
