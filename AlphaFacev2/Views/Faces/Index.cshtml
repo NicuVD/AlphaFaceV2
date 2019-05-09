@@ -15,7 +15,8 @@
 
 <div class="w3-content w3-container w3-padding-16" id="home">
     <h3 class="w3-center">Do a face comparison!</h3>
-    <p class="w3-center"><em>Take a picture with your webcam and then press compare pictures!</em></p>
+    <p class="w3-center"><em>Take a picture with your webcam to compare it with your profile picture!</em></p>
+    <p class="w3-center"><a asp-controller="Faces" asp-action="Compare"><em>...or upload a picture from your computer!</em></a></p>
 </div>
 
 <!-- First Grid: Logo & About -->
@@ -132,19 +133,6 @@
                                         document.getElementById('picture_Uploaded').innerHTML = 'Your pictures has been uploaded. Click below to compare!';
                                     });
                                 }
-
-                                                                                                            //function take_snapshot() {
-                                                                                                            //    // take snapshot and get image data
-                                                                                                            //    Webcam.snap(function (data_uri) {
-                                                                                                            //        // display results in page
-                                                                                                            //        document.getElementById('results').innerHTML =
-                                                                                                            //            '<img src="' + data_uri + '"/>';
-
-                                                                                                            //        Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                                                                                            //                                                                                                                                                                                                                                                            /*alert('Photo Captured')*/;
-                                                                                                            //        });
-                                                                                                            //    });
-                                                                                                            //}
                             </script>
                         </section>
                     </div>
@@ -167,47 +155,3 @@
         }
     }
 </div>
-
-
-@*<form>
-        <div id="pre_take_buttons" style="">
-            <input type="button" value="Take Snapshot" onclick="preview_snapshot()">
-        </div>
-        <div id="post_take_buttons" style="display: none;">
-            <input type="button" value="< Take Another" onclick="cancel_preview()">
-            <input type="button" value="Save Photo >" onclick="save_photo()" style="font-weight:bold;">
-        </div>
-    </form>
-
-    <script language="JavaScript">
-        function preview_snapshot() {
-            // freeze camera so user can preview pic
-            Webcam.freeze();
-
-            // swap button sets
-            document.getElementById('pre_take_buttons').style.display = 'none';
-            document.getElementById('post_take_buttons').style.display = '';
-        }
-
-        function cancel_preview() {
-            // cancel preview freeze and return to live camera feed
-            Webcam.unfreeze();
-
-            // swap buttons back
-            document.getElementById('pre_take_buttons').style.display = '';
-            document.getElementById('post_take_buttons').style.display = 'none';
-        }
-
-        function save_photo() {
-            // actually snap photo (from preview freeze) and display it
-            Webcam.snap(function (data_uri) {
-                // display results in page
-                document.getElementById('results').innerHTML =
-                    '<img src="' + data_uri + '"/>';
-
-                // swap buttons back
-                document.getElementById('pre_take_buttons').style.display = '';
-                document.getElementById('post_take_buttons').style.display = 'none';
-            });
-        }
-    </script>*@

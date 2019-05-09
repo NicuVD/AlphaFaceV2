@@ -4,24 +4,84 @@
     ViewData["Title"] = "Index";
 }
 
-<h4>Compare your face</h4>
+@inject AlphaFacev2.Services.AccountServices  accountServices
 
-<div class="row">
-    <section style="border:solid;border-color:dodgerblue;border-radius:10px">
-        <h5 style="text-align:center">Upload your picture for AFace</h5>
-        <hr />
-        <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="CompareProfilePictures">
-            <div class="form-group">
-                <div class="col-md-10">
-                    <p>Upload a picture to compare it to your profile picture</p>
-                    <input type="file" name="file" />
-                </div>
+@{
+    var user = accountServices.GetCurrentUser();
+}
+
+
+<div class="w3-padding-16"></div>
+
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">Do a face comparison!</h3>
+    <p class="w3-center"><em>Upload a picture from your computer to compare it with your profile picture!</em></p>
+    <p class="w3-center" ><a asp-controller="Faces" asp-action="Index"><em>...or use your webcam to take a picture!</em></a></p>
+</div>
+
+<div class="w3-padding-16 w3-center">
+    <div class="w3-row">
+        <div class="w3-half w3-black w3-container w3-center" style="height:600px">
+            <div class="w3-padding-16">
+                <h1>Profile picture</h1>
             </div>
-            <div class="form-group">
-                <div class="col-md-10">
-                    <input type="submit" value="Upload" />
-                </div>
+            <div class="w3-padding-16">
+                @{
+                    byte[] byteArray = new byte[1];
+                    if (user.ProfileImage == null)
+                    {
+                        byteArray[0] = 0;
+                    }
+                    else
+                    {
+                        byteArray = user.ProfileImage;
+                    }
+                    var base64 = Convert.ToBase64String(byteArray);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                }
+
+                @if (user.ProfileImage != null)
+                {
+                    <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+                }
+                else
+                {
+                    <img src="~/images/no-profile-pic.jpg" style="height:320px;" alt="Profile picture">
+                }
             </div>
-        </form>
-    </section>
+        </div>
+
+        <div class="w3-half w3-dark-grey w3-container w3-center" style="height: 600px">
+            <div class="w3-padding-16">
+                <h1>Upload picture</h1>
+            </div>
+            <div class="w3-padding-16">
+                <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="CompareProfilePictures">
+                    <div style="height: 346px;">
+                        <div class="w3-center" alt="Choose a file to upload">
+                            <p class="w3-large">Choose a picture from your computer...</p>
+                            <input class="w3-centered w3-text-white w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn w3-padding-64" style="width:300px" type="file" name="file" />
+                            <p class="w3-large">...and then click the button below!</p>
+                        </div>
+                    </div>
+                    @{
+                        if (user.ProfileImage != null)
+                        {
+                            <div>
+                                <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" type="submit" value="Click here to compare the pictures!" />
+                            </div>
+                        }
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
+    @{
+            if (user.ProfileImage == null)
+            {
+                <form method="post" asp-controller="Faces" asp-action="Face" style="text-align:left">
+                    <input type="submit" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" value="Click here to upload a profile picture!" style="width:100%; height:80px; font-size:larger;">
+                </form>
+            }
+        }
 </div>

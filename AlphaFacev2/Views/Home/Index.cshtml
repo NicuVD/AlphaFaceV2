@@ -27,11 +27,11 @@
     <div class="w3-row">
         @if (Context.Session.GetString("FirstName") != null)
         {
-            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Details">Hello @Context.Session.GetString("FirstName")!</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> try a face comparison </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Faces" asp-action="Index">AFACE</a>
+            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" asp-controller="Profiles" asp-action="Details">Hello @Context.Session.GetString("FirstName")!</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> try a face comparison </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-hover-opacity-off w3-opacity-min w3-btn" asp-controller="Faces" asp-action="Index">AFACE</a>
         }
         else
         {
-            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Register">REGISTER</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> to find out more </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Login">LOGIN</a>
+            <a class="w3-third w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" asp-controller="Profiles" asp-action="Register">REGISTER</a><span class="w3-third w3-center w3-padding-large w3-black w3-small w3-hide-medium-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min"> to find out more </span><a class="w3-third w3-right w3-padding-large w3-black w3-medium w3-letter-spacing-small w3-animate-opacity w3-hover-opacity-off w3-opacity-min w3-btn" asp-controller="Profiles" asp-action="Login">LOGIN</a>
         }
     </div>
 
