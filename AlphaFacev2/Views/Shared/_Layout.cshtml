@@ -8,6 +8,7 @@
     <title>Project Alpha Face Authentication</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     @*<link rel="stylesheet" href="~/css/w3.css">*@
     @*<link rel="stylesheet" href="~/css/fonts.css">*@
     @*<link rel="stylesheet" href="~/css/cloudflareFonts.css">*@
@@ -20,6 +21,7 @@
         @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />*@
         <link rel="stylesheet" href="~/css/w3.css" />
     </environment>
+
     <environment exclude="Development">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -27,15 +29,18 @@
               crossorigin="anonymous"
               integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
     </environment>
+
     <link rel="stylesheet" href="~/css/site_w3s.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 </head>
+
 <body>
     <div class="w3-top">
         <div class="w3-bar w3-white" id="myNavbar">
             <a class="w3-bar-item w3-button w3-hover-black w3-hide-small w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
                 <i class="fa fa-bars"></i>
             </a>
-            <a class="w3-bar-item w3-button" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
+            <a class="w3-bar-item w3-button" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa fa-home" aria-hidden="true"></i>HOME</a>
             <a href="~/Home/Index/#about" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-book"></i> ABOUT</a>
             <a href="~/Home/Index/#contact" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
 
@@ -54,7 +59,7 @@
 
             @if (Context.Session.GetString("FirstName") != null)
             {
-                <a class="w3-bar-item w3-button w3-hide-small w3-right" asp-area="" asp-controller="Profiles" asp-action="Logout"><i class="fa"></i> LOGOUT</a>
+                <a class="w3-bar-item w3-button w3-hide-small w3-right" asp-area="" asp-controller="Profiles" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> LOGOUT</a>
                 <a class="w3-bar-item w3-button w3-hide-small w3-right" asp-area="" asp-controller="Profiles" asp-action="Details"><i class="fa fa-user"></i> Hello @Context.Session.GetString("FirstName")!</a>
             }
             else
@@ -63,8 +68,8 @@
                 <a class="w3-bar-item w3-button w3-hide-small w3-right" asp-area="" asp-controller="Profiles" asp-action="Register"><i class="fa fa-envelope"></i> REGISTER</a>
             }
             @*<a href="#" class="w3-bar-item w3-button w3-hide-small w3-right w3-hover-red">
-            <i class="fa fa-search"></i>
-        </a>*@
+                    <i class="fa fa-search"></i>
+                </a>*@
         </div>
 
         @*NEEDS TO BE REDONE ACCORDING TO THE ABOVE*@
