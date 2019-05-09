@@ -8,18 +8,21 @@
 
 <div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
     <div class="w3-display-middle" style="white-space:nowrap;">
-        <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">LOGO <span class="w3-hide-small">ALPHA</span> TEAM</span>
+        <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity "><i class="fab fa-artstation fa-inverse"></i>TEAM ALPHA</span>
+        @*<span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">LOGO <span class="w3-hide-small">ALPHA</span> TEAM</span>*@
     </div>
 </div>
 <p style="text-align:right; font-size:small; font-style:italic">Source: blogs.microsoft.com</p>
 <div class="w3-content w3-container w3-padding-64" id="about">
     <h2 class="w3-center">AFace Face Authentication</h2>
     <p class="w3-center"><em>This a face recognition project of Team Alpha</em></p>
-    <p>
-        We have created a fictional "personal" website/blog, and our fictional character is a hobby photographer. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-        qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    <p style="text-indent:30px">
+        Until recently, face recognition technology was commonly viewed as something straight out of science fiction. But over the past decade, this groundbreaking technology has not just become viable, it has become widespread. In fact, it’s difficult to read technology news these days without seeing something about face recognition.
     </p>
+    <p style="text-indent:30px">
+        There are several industries benefitting from this technology. Law enforcement agencies are using face recognition to keep communities safer. Retailers are preventing crime and violence. Airports are improving travelers’ convenience and security. And mobile phone companies are using face recognition to provide consumers with new layers of biometric security.
+    </p>
+    <p style="text-indent:30px">
     <p>
         The project uses the <a href="https://azure.microsoft.com/en-us/services/cognitive-services/face/">Face API</a> from <a href="https://azure.microsoft.com/en-us/services/cognitive-services/">Microsoft Cognitive Services</a>.
     </p>
@@ -45,8 +48,11 @@
         <div class="w3-col m7 w3-hide-small w3-padding-16 w3-right">
             <p><b><i class="fa"></i></b></p><br>
             <p>
-                Welcome to our website! ""MUST BE CHANGED""
-                We are a team of enthusiastic developers and entrepreneurs who decided to convert their common experience into this web store. We hope you’ll like it as much as we do, and have a great shopping experience here. Our prime goal is creating a shop in which you can easily find whatever product you need. ...
+                Welcome to our website! <br />
+                We are a team of enthusiastic developers and entrepreneurs who decided to convert their common experience into this web store. We hope you’ll like it as much as we do, and have a great shopping experience here. Our prime goal is creating a shop in which you can easily find whatever product you need.<br />
+                We are inspired by the technology available today to find new ways to use the Internet.
+                By developing this application we believe that we can inspire many other people to use this great feature in every way imaginable.
+
             </p>
         </div>
     </div>
@@ -80,6 +86,49 @@
         <div class="w3-quarter w3-section">
             <span class="w3-xlarge">4+</span><br>
             Meetings
+        </div>
+    </div>
+
+    <!-- Container (Portfolio Section) -->
+    <div class="w3-content w3-container w3-padding-64" id="portfolio">
+        <h3 class="w3-center">FACE RECOGNITION</h3>
+        @*<p class="w3-center"><em>Click on the images to give it a try</em></p><br>*@
+
+        <!-- Responsive Grid. Four columns on tablets, laptops and desktops. Will stack on mobile devices/small screens (100% width) -->
+        <div class="w3-row-padding w3-center">
+            <div class="w3-col m3">
+                <img src="~/images/faceRecognition1.jpeg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="The mist over the mountains">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/face-recognition-3.jpg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="Coffee beans">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/face-recognition-11.jpg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="Bear closeup">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/face-recognition-4.jpg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="Quiet ocean">
+            </div>
+        </div>
+
+        <div class="w3-row-padding w3-center w3-section">
+            <div class="w3-col m3">
+                <img src="~/images/face-recognition-8.jpg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="The mist">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/facial-recognition-2.jpg" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="My beloved typewriter">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/face-recognition-9png.png" style="max-width:100%" width="700" height="170" onclick="onClick(this)" class="w3-hover-opacity" alt="Empty ghost train">
+            </div>
+
+            <div class="w3-col m3">
+                <img src="~/images/facial-recognition-5.jpg" style="max-width:100%" width="700" height="170" class="w3-hover-opacity" alt="Sailing">
+            </div>
         </div>
     </div>
 
@@ -119,4 +168,4 @@
             </div>
         </div>
     </div>
-    </div> @*added*@
+</div> @*added*@

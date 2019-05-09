@@ -1,93 +1,138 @@
 ﻿@model AlphaFacev2.Models.Profile
+@*@model IEnumerable<AlphaFacev2.Models.Image>*@
+@using Microsoft.AspNetCore.Http
+
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
+@{
+    var user = accountServices.GetCurrentUser();
+}
 
 @{
     ViewData["Title"] = "Login";
 }
 
-<h4>Login using AFace</h4>
-<hr />
+<div class="w3-padding-16"></div>
 
-<div class="row">
-    <div class="column" style="min-width:340px; border:1px solid white">
-        <form method="post" asp-controller="Profiles" asp-action="LoginAFace" style="text-align:left">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">Login with your webcam picture!</h3>
+    <p class="w3-center"><em>Take a picture with your webcam and add your email address!</em></p>
+</div>
+
+<div class="w3-padding-16 w3-center">
+    <div class="w3-row">
+        <div class="w3-half w3-black w3-container" style="height:600px">
+            <div class="w3-padding-16">
+                <h1>Login data</h1>
             </div>
-            <div style="height:280px">
-                <h6>Picture to use for AFace login</h6>
-                <div class="col-md-10">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div id="results"></div>
+            <form method="post" asp-controller="Profiles" asp-action="LoginAFace">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="w3-padding-16">
+                    <div class="w3-container w3-centered">
+                        <div class="w3-container w3-centered">
+                            <input class="w3-centered w3-input w3-border-0 w3-dark-grey" style="min-width:400px; height: 40px" type="text" placeholder="Email" required name="Email" asp-for="Email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="w3-padding-16 w3-centered">
+                            <div class="w3-container" id="results" style="height:320px"></div>
+                        </div>
+                        <div class="w3-container w3-centered">
+                            <input type="submit" value="Login using AFace" class="w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" />
                         </div>
                     </div>
                 </div>
-            </div>
-            <input type="submit" class="btn btn-primary btn-warning" value="Login using AFace" style="width:260px; height:40px; font-size:larger;">
-        </form>
-    </div>
+            </form>
+        </div>
 
-    <div class="column" style="width:60px"></div>
-
-    <div class="column" style="min-width:400px; border:1px solid white">
-        <div class="col-md-10" style="text-align:center; height: 360px">
-            <section>
-                <h6 style="text-align:center;">Take a picture using your webcam</h6>
+        <div class="w3-half w3-dark-grey w3-container w3-center" style="height: 600px">
+            <div class="w3-padding-16">
                 <div>
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div id="my_camera"></div>
-                            <!-- A button for taking snaps -->
+                    <h1>Webcam picture</h1>
+                </div>
+                <div >
+                    <p class="w3-centered w3-input w3-border-0 w3-dark-grey">Use the webcam to take a picture</p>
+                    <div class="w3-center" style="height: 320px;" alt="Webcam picture">
+                        <section>
                             <div>
-                                <br />
+                                <div class="w3-center w3-panel">
+                                    <div style="margin: 0% 0% 0% 17%" id="my_camera"></div>
+                                    <!-- A button for taking snaps -->
+                                    <div>
+                                        <br />
+                                    </div>
+                                </div>
                                 <form>
-                                    <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
+                                    <div>
+                                        <input id="pre_take_buttons" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 400px" value="Take Snapshot" onClick="preview_snapshot()">
+                                    </div>
+                                    <div id="post_take_buttons" style="display: none;">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 200px" value="Take another" onclick="cancel_preview()">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 200px" value="Use this picture" onclick="save_photo()">
+                                    </div>
                                 </form>
                             </div>
-                        </div>
+                            <div class="col-md-2">    </div>
+                            <!-- First, include the Webcam.js JavaScript Library -->
+                            <script src="~/webcamjs/webcam.js"></script>
+                            <!-- Configure a few settings and attach camera -->
+                            <script language="JavaScript">
+                                Webcam.set({
+                                    width: 427.2,
+                                    height: 320,
+                                    image_format: 'jpeg',
+                                    jpeg_quality: 100,
+                                    flip_horiz: true
+                                });
+                                Webcam.attach('#my_camera');
+                            </script>
+
+                            <!-- Code to handle taking the snapshot and displaying it locally -->
+                            <script language="JavaScript">
+                                function preview_snapshot() {
+                                    // freeze camera so user can preview pic
+                                    Webcam.freeze();
+
+                                    // swap button sets
+                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('post_take_buttons').style.display = '';
+                                    document.getElementById('picture_Uploaded').innerHTML = '';
+                                }
+
+                                function cancel_preview() {
+                                    // cancel preview freeze and return to live camera feed
+                                    Webcam.unfreeze();
+
+                                    // swap buttons back
+                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('post_take_buttons').style.display = 'none';
+                                }
+
+                                function save_photo() {
+                                    // actually snap photo (from preview freeze) and display it
+                                    Webcam.snap(function (data_uri) {
+                                        //// display results in page
+                                        document.getElementById('results').innerHTML =
+                                            '<img src="' + data_uri + '"/>';
+
+                                        //Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
+                                        //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                /*alert('Photo Captured')*/;
+                                        //});
+
+                                        // swap buttons back and add message for user
+                                        document.getElementById('pre_take_buttons').style.display = 'none';
+                                        document.getElementById('post_take_buttons').style.display = 'none';
+                                        document.getElementById('post_picture_button').style.display = '';
+                                        document.getElementById('picture_Uploaded').innerHTML = 'Your pictures has been prepared. Click to login!';
+                                    });
+                                }
+                            </script>
+                        </section>
                     </div>
                 </div>
-                <div class="col-md-2">    </div>
-                <!-- First, include the Webcam.js JavaScript Library -->
-                <script src="~/webcamjs/webcam.js"></script>
-                <!-- Configure a few settings and attach camera -->
-                <script language="JavaScript">
-                    Webcam.set({
-                        width: 320,
-                        height: 240,
-                        image_format: 'jpeg', // changed from jpeg
-                        jpeg_quality: 100
-                    });
-                    Webcam.attach('#my_camera');
-                </script>
-
-                <!-- Code to handle taking the snapshot and displaying it locally -->
-                <script language="JavaScript">
-                    function take_snapshot() {
-                        // take snapshot and get image data
-                        Webcam.snap(function (data_uri) {
-                            // display results in page
-                            document.getElementById('results').innerHTML =
-                                '<img src="' + data_uri + '"/>';
-
-                            Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                                                                                                    /*alert('Photo Captured')*/;
-                            });
-                        });
-                    }
-                </script>
-            </section>
+            </div>
         </div>
     </div>
+    <p></p>
+    <a asp-controller="Profiles" asp-action="Details" class="w3-centered w3-black w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="font-size: larger;">Back to login</a>
 </div>
-<br />
-<div>
-    <a asp-controller="Profiles" asp-action="Login">Back to Login</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

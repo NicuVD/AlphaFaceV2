@@ -5,74 +5,107 @@
 }
 
 
-<h4>Register</h4>
+<div class="w3-content w3-container w3-black w3-padding-64">
+    <h3 class="w3-center" style="font-size:25px;">REGISTER</h3>
 
-
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="Profiles" asp-action="RegisterAsync" method="post">
-
-            @if (ViewBag.Message != null)
-            {
-                <div class="form-control">
-                    <div class="col-md-10">@ViewBag.Message</div>
+    <div class="w3-container">
+        <form asp-controller="Profiles" asp-action="RegisterAsync" method="post" role="form">
+            <div asp-validation-summary="ModelOnly" class="w3-center text-danger"></div>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
                 </div>
-            }
-
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="text" required name="First Name" asp-for="FirstName">
+                    <span asp-validation-for="FirstName" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="text" required name="Last Name" asp-for="LastName">
+                    <span asp-validation-for="LastName" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="DateOfBirth" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="date" required name="Birthday" asp-for="DateOfBirth">
+                    <span asp-validation-for="DateOfBirth" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-
-                <div>
-                    <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Genders>()">
-                        <option selected="selected" value="">Please select an option</option>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="Gender" class="control-label"></label>
+                    <select asp-for="Gender" class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px; font-size:12px;" type="text" required name="Gender" asp-items="Html.GetEnumSelectList<Genders>()">
+                        <option selected="selected">Please select an option</option>
                     </select>
-                    <span asp-validation-for="Gender" class="text-danger"></span>
+                    <span asp-validation-for="Gender" class="w3-left text-danger"></span>
                 </div>
+                <div class="w3-third w3-container">
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="text" required name="Email" asp-for="Email">
+                    <span asp-validation-for="Email" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="Password" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="password" required name="Password" asp-for="Password">
+                    <span asp-validation-for="Password" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-third w3-container">
+                </div>
+                <div class="w3-third w3-container w3-padding-small">
+                    <label asp-for="ConfirmPassword" class="control-label"></label>
+                    <input class="w3-input w3-border-0 w3-dark-gray" style="width: 300px; height: 30px" type="password" required name="Confirm Password" asp-for="ConfirmPassword">
+                    <span asp-validation-for="ConfirmPassword" class="w3-left text-danger"></span>
+                </div>
+                <div class="w3-third w3-container">
+                </div>
+            </div>
 
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword" class="control-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Register" class="btn btn-primary" />
+            <br />
+            <div class="w3-center">
+                <input type="submit" value="Register" class="w3-button w3-hover-text-dark-gray w3-blue-grey w3-center" />
             </div>
         </form>
     </div>
+    <br />
+    <div style="text-align:center;">
+        <p></p>
+        <br />
+        <p style="font-size:17px; margin:0px 0px">Do you already have an account?</p>
+        <p class="w3-center w3-button w3-dark-gray w3-border-0 w3-section"><a asp-controller="Profiles" asp-action="Login">Log In Here</a></p>
+    </div>
 </div>
-
-<div>
-    <a asp-controller="Home" asp-action="Index">Back to Home</a>
-</div>
+<p></p>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
