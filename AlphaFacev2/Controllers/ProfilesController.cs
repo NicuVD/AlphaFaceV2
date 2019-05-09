@@ -9,6 +9,7 @@ using AlphaFacev2.Models;
 using AlphaFacev2.Services;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Net;
 
 namespace AlphaFacev2.Controllers
 {
@@ -124,7 +125,7 @@ namespace AlphaFacev2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,DateOfBirth,Gender,Email,Password,ProfileImage")] Profile profile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,DateOfBirth,Gender,Email,Password,ConfirmPassword")] Profile profile)
         {
             if (id != profile.Id)
             {
@@ -290,7 +291,7 @@ namespace AlphaFacev2.Controllers
                 };
 
                 var loginTime = DateTime.Now;
-                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+                var ipAddress = GetIpAdress();
                 bool loginSucces = true;
                 bool isUserLoggedIn = true;
                 var historyEntry = LogHistory(user, loginTime, loginSucces, ipAddress, isUserLoggedIn);
@@ -320,7 +321,7 @@ namespace AlphaFacev2.Controllers
             {
                 var loginTime = DateTime.Now;
                 bool loginSucces = false;
-                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+                var ipAddress = GetIpAdress();
                 bool isUserLogedIn = false;
                 History historyEntry = new History();
 
@@ -379,11 +380,16 @@ namespace AlphaFacev2.Controllers
                 // prepare data for history log
                 var loginTime = DateTime.Now;
                 bool loginSucces = false;
-                var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+                var ipAddress = GetIpAdress();
                 bool isUserLogedIn = false;
                 History historyEntry = new History();
                 ImageStore webcamImage = await _context.ImageStore.LastOrDefaultAsync();
                 var profileImage = _context.Profile.FirstOrDefault(p => p.Email == user.Email).ProfileImage;
+
+                if (profileImage == null)
+                {
+                    return RedirectToAction("Login");
+                }
 
                 // get result from Microsoft Face API
                 var result = await AFaceCompareUserPictureToWebcamPicture(webcamImage, profileImage);
@@ -391,8 +397,8 @@ namespace AlphaFacev2.Controllers
                 // get user account with corresponding email only if Face API returns
                 // that the faces are identical with a confidence of over 0.6
                 Profile account = _context.Profile.FirstOrDefault(
-                    p => (p.Email == user.Email) && 
-                        (result.IsIdentical == true) && 
+                    p => (p.Email == user.Email) &&
+                        (result.IsIdentical == true) &&
                             (result.Confidence >= 0.6));
 
                 if (account != null)
@@ -427,7 +433,7 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("LoginAFace");
         }
 
-        private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, System.Net.IPAddress ipAddress, bool isUserLogedIn)
+        private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, string ipAddress, bool isUserLogedIn)
         {
             History historyEntry = new History
             {
@@ -459,7 +465,7 @@ namespace AlphaFacev2.Controllers
         {
             var loginTime = DateTime.Now;
             bool loginSucces = false;
-            var ipAddress = Request.HttpContext.Connection.RemoteIpAddress;
+            var ipAddress = GetIpAdress();
             History historyEntry = new History();
             bool isUserLogedIn = false;
 
@@ -533,9 +539,17 @@ namespace AlphaFacev2.Controllers
             profileToUpdate.ProfileImage = imageByteArray;
             _context.Update<Profile>(profileToUpdate);
             await _context.SaveChangesAsync();
-            
+
             StatusMessage = "Your profile picture has been updated";
             return RedirectToAction("Index", "Profiles");
+        }
+
+        public static string GetIpAdress()
+        {
+            IPHostEntry server = Dns.GetHostEntry(Dns.GetHostName());
+            var ip = server.AddressList[1].ToString();
+
+            return ip;
         }
     }
 }

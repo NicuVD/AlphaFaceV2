@@ -322,7 +322,22 @@ namespace AlphaFacev2.Controllers
 
                 var result = await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
 
-                return View("ComparisonResults", result);
+                if (result != null)
+                {
+                    Face faceComparison = new Face()
+                    {
+                        ProfileId = userProfile.Id,
+                        ProfileImage = userProfile.ProfileImage,
+                        ComparisonImage = uploadedImageByteArray,
+                        IsIdentical = result.IsIdentical,
+                        Confidence = result.Confidence
+                    };
+
+                    _context.Face.Add(faceComparison);
+                    await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction("ComparisonResults");
             }
 
             return RedirectToAction("Compare", "Faces");

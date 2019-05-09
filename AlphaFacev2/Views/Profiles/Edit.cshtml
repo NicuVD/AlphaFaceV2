@@ -3,90 +3,141 @@
 @inject AlphaFacev2.Services.AccountServices  accountServices
 
 @{
-    ViewData["Title"] = "Edit";
+    var user = accountServices.GetCurrentUser();
 }
 
-<h1>Edit</h1>
+@{
+    ViewData["Title"] = "Details";
+}
 
-<h4>Profile</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProfileImage" class="control-label"></label>
-                <div>
-                    @{
-                        var user = accountServices.GetCurrentUser();
+<div class="w3-padding-16"></div>
 
-                        byte[] byteArray = new byte[1];
-                        if (Model.ProfileImage == null)
-                        {
-                            byteArray[0] = 0;
-                        }
-                        else
-                        {
-                            byteArray = Model.ProfileImage;
-                        }
-                        var base64 = Convert.ToBase64String(byteArray);
-                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
-                    }
-                    <img src="@imgSrc" alt="Profile Picture" height="100" />
-                </div>
-                <p></p>
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">Hello @user.FirstName!</h3>
+    <p class="w3-center"><em>On this page you can edit your personal data!</em></p>
+</div>
+
+<div class="w3-padding-16 w3-center">
+    <div class="w3-row">
+        <div class="w3-half w3-black w3-container w3-center" style="height:600px">
+            <div class="w3-padding-16">
+                <h1>Profile picture</h1>
+            </div>
+            <div class="w3-padding-16">
                 @{
-                    if (user.ProfileImage != null)
+                    byte[] byteArray = new byte[1];
+                    if (user.ProfileImage == null)
                     {
-                                <div style="border:1px solid;border-color:dodgerblue;border-radius:10px; text-align:center; max-width:320px">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Faces" asp-action="Face">Change profile picture</a>
-                                </div>
+                        byteArray[0] = 0;
                     }
+                    else
+                    {
+                        byteArray = user.ProfileImage;
+                    }
+                    var base64 = Convert.ToBase64String(byteArray);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
                 }
-                <span asp-validation-for="ProfileImage" class="text-danger"></span>
+
+                @if (user.ProfileImage != null)
+                {
+                    <img src="@imgSrc" style="height:320px;" alt="Profile picture">
+                }
+                else
+                {
+                    <img src="~/images/no-profile-pic.jpg" style="height:320px;" alt="Profile picture">
+                }
             </div>
-            <div class="form-group">
-                <label class="control-label">Input password to save changes</label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <form asp-controller="Faces" asp-action="Face">
+                <div>
+                    <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" type="submit" value="Change profile picture" />
+                </div>
+            </form>
+        </div>
+
+        <div class="w3-half w3-dark-grey w3-container" style="height:600px">
+            <div class="w3-padding-16">
+                <h1>Personal information</h1>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+            <form method="post" asp-controller="Profiles" asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="w3-padding-16">
+
+                    <table class="w3-table">
+                        <tbody>
+
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>First Name</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Last Name</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="LastName" class="form-control" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Birthday</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="DateOfBirth" class="form-control" />
+                                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Gender</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="Gender" class="form-control" />
+                                    <span asp-validation-for="Gender" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Email</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Password</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="Password" class="form-control"/>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>Confirm password</td>
+                                <td>
+                                    <i class="fa fa-fw w3-hover-text-black w3-xlarge w3-margin-left"></i>
+                                    <input asp-for="ConfirmPassword" class="form-control"/>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </td>
+                            </tr>
+                            <tr><td></td></tr>
+                            <tr><td></td></tr>
+                            <tr>
+                                <td colspan="2" style="text-align:center">
+                                    <div>
+                                        <input type="submit" value="Save" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" onmouseover="update_data()" />
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
     </div>
+    <p></p>
+    <a asp-controller="Profiles" asp-action="Details" class="w3-centered w3-black w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="font-size: larger;">Back to your profile</a>
 </div>
-
-<div>
-    <a asp-action="Details">Back to Profile</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

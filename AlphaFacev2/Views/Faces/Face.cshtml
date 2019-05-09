@@ -1,104 +1,140 @@
-﻿@{
+﻿@model IEnumerable<AlphaFacev2.Models.Image>
+@using Microsoft.AspNetCore.Http
+
+@inject AlphaFacev2.Services.AccountServices  accountServices
+
+@{
+    var user = accountServices.GetCurrentUser();
+}
+
+@{
     ViewData["Title"] = "Face";
 }
 
+<div class="w3-padding-16"></div>
 
-    <div class="row">
-        <div class="column">
-            <div class="col-md-10" style="text-align:center; height: 360px;">
-                <section>
-                    <h6 style="text-align:center; width:340px">Take a picture using your webcam</h6>
-                    <div>
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div id="my_camera"></div>
-                                <!-- A button for taking snaps -->
-                                <div>
-                                    <br />
-                                    <form>
-                                        <input type="button" class="btn btn-primary" value="Take Snapshot" onClick="take_snapshot()">
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">    </div>
-                    <!-- First, include the Webcam.js JavaScript Library -->
-                    <script src="~/webcamjs/webcam.js"></script>
-                    <!-- Configure a few settings and attach camera -->
-                    <script language="JavaScript">
-                        Webcam.set({
-                            width: 320,
-                            height: 240,
-                            image_format: 'jpeg', // changed from jpeg
-                            jpeg_quality: 100
-                        });
-                        Webcam.attach('#my_camera');
-                    </script>
-
-                    <!-- Code to handle taking the snapshot and displaying it locally -->
-                    <script language="JavaScript">
-                        function take_snapshot() {
-                            // take snapshot and get image data
-                            Webcam.snap(function (data_uri) {
-                                // display results in page
-                                document.getElementById('results').innerHTML =
-                                    '<img src="' + data_uri + '"/>';
-
-                                Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                                                                                                                                                                        /*alert('Photo Captured')*/;
-                                });
-                            });
-                        }
-                    </script>
-                </section>
-            </div>
-            <br />
-            <div style="min-width:340px; border:1px solid white">
-                <section style="border:solid;border-color:dodgerblue;border-radius:10px">
-                    <h6 style="text-align:center">Update profile picture</h6>
-                    <hr />
-                    <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="PostProfilePicture">
-                        <div class="form-group">
-                            <div class="col-md-10">
-                                <p>Upload one or more files using this form:</p>
-                                <input type="file" name="file" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-10">
-                                <input type="submit" value="Upload" />
-                            </div>
-                        </div>
-                    </form>
-                </section>
-            </div>
-        </div>
-
-        <div class="column" style="width:60px"></div>
-
-        <div class="column" style="min-width:400px; border:1px solid white">
-            <form method="post" asp-controller="Profiles" asp-action="UpdateProfilePicture" style="text-align:left">
-                <div style="text-align:center; height:280px; width:340px">
-                    <h6>Picture to use for AFace login</h6>
-                    <div class="col-md-10">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div id="results"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br />
-                <input type="submit" class="btn btn-primary btn-warning" value="Update profile picture" style="width:260px; height:40px; font-size:larger;">
-            </form>
-        </div>
-    </div>
-<br />
-<div>
-    <a asp-controller="Profiles" asp-action="Login">Back to Login</a>
+<div class="w3-content w3-container w3-padding-16" id="home">
+    <h3 class="w3-center">Add a picture to your profile!</h3>
+    <p class="w3-center"><em>Take a picture with your webcam or upload one from your computer!</em></p>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<!-- First Grid: Logo & About -->
+<div class="w3-padding-16 w3-center">
+    <div class="w3-row">
+        <div class="w3-half w3-black w3-container w3-center" style="height: 600px">
+            <div class="w3-padding-16">
+                <h1>Upload picture</h1>
+            </div>
+            <div class="w3-padding-16">
+                <form method="post" enctype="multipart/form-data" asp-controller="Faces" asp-action="PostProfilePicture">
+                    <div style="height: 346px;">
+                        <div class="w3-center" alt="Choose a file to upload">
+                            <p class="w3-large">Choose a picture from your computer...</p>
+                            <input class="w3-centered w3-text-white w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn w3-padding-32" style="width:300px" type="file" name="file" />
+                            <p class="w3-large">...and then click the button below!</p>
+                        </div>
+                    </div>
+                    <div>
+                            <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" type="submit" value="Update profile picture" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="w3-half w3-dark-grey w3-container w3-center" style="height: 600px">
+            <div class="w3-padding-16">
+                <div>
+                    <h1>Webcam picture</h1>
+                </div>
+                <div class="w3-padding-16">
+                    <div class="w3-center" style="height: 320px;" alt="Webcam picture">
+                        <section>
+                            <div>
+                                <div class="w3-center w3-panel">
+                                    <div style="margin: 0% 0% 0% 17%" id="my_camera"></div>
+                                    <!-- A button for taking snaps -->
+                                    <div>
+                                        <br />
+                                    </div>
+                                </div>
+                                <form>
+                                    <div>
+                                        <input id="pre_take_buttons" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 400px" value="Take Snapshot" onClick="preview_snapshot()">
+                                    </div>
+                                    <div id="post_take_buttons" style="display: none;">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 200px" value="Take Another" onclick="cancel_preview()">
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 200px" value="Save Photo" onclick="save_photo()">
+                                    </div>
+                                </form>
+                                <form id="post_picture_button" style="display: none;" method="post" asp-controller="Profiles" asp-action="UpdateProfilePicture">
+                                    <div id="results" style="display: none;"></div>
+                                    <div>
+                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="submit" style="width: 400px" value="Update profile picture">
+                                    </div>
+                                    <h6><i id="picture_Uploaded"></i></h6>
+                                </form>
+                            </div>
+                            <div class="col-md-2">    </div>
+                            <!-- First, include the Webcam.js JavaScript Library -->
+                            <script src="~/webcamjs/webcam.js"></script>
+                            <!-- Configure a few settings and attach camera -->
+                            <script language="JavaScript">
+                                Webcam.set({
+                                    width: 427.2,
+                                    height: 320,
+                                    image_format: 'jpeg',
+                                    jpeg_quality: 100,
+                                    flip_horiz: true
+                                });
+                                Webcam.attach('#my_camera');
+                            </script>
+
+                            <!-- Code to handle taking the snapshot and displaying it locally -->
+                            <script language="JavaScript">
+                                function preview_snapshot() {
+                                    // freeze camera so user can preview pic
+                                    Webcam.freeze();
+
+                                    // swap button sets
+                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('post_take_buttons').style.display = '';
+                                    document.getElementById('picture_Uploaded').innerHTML = '';
+                                }
+
+                                function cancel_preview() {
+                                    // cancel preview freeze and return to live camera feed
+                                    Webcam.unfreeze();
+
+                                    // swap buttons back
+                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('post_take_buttons').style.display = 'none';
+                                }
+
+                                function save_photo() {
+                                    // actually snap photo (from preview freeze) and display it
+                                    Webcam.snap(function (data_uri) {
+                                        //// display results in page
+                                        document.getElementById('results').innerHTML =
+                                            '<img src="' + data_uri + '"/>';
+
+                                        Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /*alert('Photo Captured')*/;
+                                        });
+
+                                        // swap buttons back and add message for user
+                                        document.getElementById('pre_take_buttons').style.display = 'none';
+                                        document.getElementById('post_take_buttons').style.display = 'none';
+                                        document.getElementById('post_picture_button').style.display = '';
+                                        document.getElementById('picture_Uploaded').innerHTML = 'Your pictures has been prepared. Click to update profile!';
+                                    });
+                                }
+                            </script>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p></p>
+    <a asp-controller="Profiles" asp-action="Details" class="w3-centered w3-black w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="font-size: larger;">Back to your profile</a>
+</div>
