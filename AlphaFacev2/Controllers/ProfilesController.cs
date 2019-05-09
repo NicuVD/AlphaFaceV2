@@ -303,7 +303,7 @@ namespace AlphaFacev2.Controllers
                 return RedirectToAction(nameof(Index), "Home");
             }
 
-            return View(user);
+            return RedirectToAction("Register", "Profiles");
 
         }
 
