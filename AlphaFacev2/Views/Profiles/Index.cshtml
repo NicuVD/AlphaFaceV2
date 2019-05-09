@@ -46,7 +46,7 @@
                         }
                         <hr>
                         <p><i class="fa fa-user fa-fw w3-text-theme"></i> @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)</p>
-                        <p><i class="fa fa-birthday-cake fa-fw w3-text-theme"></i>@{string dob = user.DateOfBirth.Value.ToShortDateString();} @dob</p>
+                        <p><i class="fa fa-birthday-cake fa-fw w3-text-theme"></i>@{string dob = item.DateOfBirth.Value.ToShortDateString();} @dob</p>
                         <p><i class="fa fa-envelope fa-fw w3-text-theme"></i> @Html.DisplayFor(modelItem => item.Email)</p>
                         <p>
                             @if (user.UserName == item.UserName)

@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div>
-                            <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" type="submit" value="Update profile picture" />
+                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" style="width: 400px" type="submit" value="Update profile picture" />
                     </div>
                 </form>
             </div>
@@ -66,10 +66,10 @@
                                         <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="button" style="width: 200px" value="Save Photo" onclick="save_photo()">
                                     </div>
                                 </form>
-                                <form id="post_picture_button" style="display: none;" method="post" asp-controller="Profiles" asp-action="UpdateProfilePicture">
+                                <form method="post" asp-controller="Profiles" asp-action="UpdateProfilePicture">
                                     <div id="results" style="display: none;"></div>
                                     <div>
-                                        <input class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn" type="submit" style="width: 400px" value="Update profile picture">
+                                        <input id="post_picture_button" type="submit" style="width: 400px; display: none;" value="Update profile picture" class="w3-centered w3-blue-grey w3-large w3-letter-spacing-small w3-animate-opacity w3-opacity-min w3-hover-opacity-off w3-btn">
                                     </div>
                                     <h6><i id="picture_Uploaded"></i></h6>
                                 </form>
@@ -106,7 +106,7 @@
                                     Webcam.unfreeze();
 
                                     // swap buttons back
-                                    document.getElementById('pre_take_buttons').style.display = 'none';
+                                    document.getElementById('pre_take_buttons').style.display = '';
                                     document.getElementById('post_take_buttons').style.display = 'none';
                                 }
 
@@ -118,14 +118,14 @@
                                             '<img src="' + data_uri + '"/>';
 
                                         Webcam.upload(data_uri, '/Faces/Capture', function (code, text) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /*alert('Photo Captured')*/;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        /*alert('Photo Captured')*/;
                                         });
 
                                         // swap buttons back and add message for user
                                         document.getElementById('pre_take_buttons').style.display = 'none';
                                         document.getElementById('post_take_buttons').style.display = 'none';
                                         document.getElementById('post_picture_button').style.display = '';
-                                        document.getElementById('picture_Uploaded').innerHTML = 'Your pictures has been prepared. Click to update profile!';
+                                        document.getElementById('picture_Uploaded').innerHTML = 'Your picture has been prepared. Click to update profile!';
                                     });
                                 }
                             </script>

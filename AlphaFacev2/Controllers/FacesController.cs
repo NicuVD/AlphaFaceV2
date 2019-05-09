@@ -469,10 +469,10 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("Index", "Faces");
         }
 
-        public IActionResult Capture()
-        {
-            return View();
-        }
+        //public IActionResult Capture()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
         public IActionResult Capture(string name)
@@ -506,11 +506,11 @@ namespace AlphaFacev2.Controllers
                         //  Generating Path to store photo   
                         var filepath = Path.Combine(_environment.WebRootPath, "CameraPhotos") + $@"\{newFileName}";
 
-                        //if (!string.IsNullOrEmpty(filepath))
-                        //{
-                        //    // Storing Image in Folder  
-                        //    StoreInFolder(file, filepath);
-                        //}
+                        if (!string.IsNullOrEmpty(filepath))
+                        {
+                            // Storing Image in Folder  
+                            StoreInFolder(file, filepath);
+                        }
 
                         var imageBytes = System.IO.File.ReadAllBytes(filepath);
                         if (imageBytes != null)
