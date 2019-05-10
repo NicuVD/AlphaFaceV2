@@ -10,6 +10,7 @@ using AlphaFacev2.Services;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Net;
+using System.Data;
 
 namespace AlphaFacev2.Controllers
 {
@@ -415,6 +416,7 @@ namespace AlphaFacev2.Controllers
 
                             _context.History.Add(historyEntry);
                             _context.Profile.Update(user);
+                            _context.ImageStore.Remove(webcamImage);
                             await _context.SaveChangesAsync();
 
                             SetContextOnLoginOrRegister(account);
@@ -546,6 +548,7 @@ namespace AlphaFacev2.Controllers
             profileToUpdate.ProfileImage = imageByteArray;
             _context.Update<Profile>(profileToUpdate);
             await _context.SaveChangesAsync();
+            _context.ImageStore.Remove(profilePicture);  // ADDED!!!
 
             StatusMessage = "Your profile picture has been updated";
             return RedirectToAction("Index", "Profiles");
@@ -558,5 +561,6 @@ namespace AlphaFacev2.Controllers
 
             return ip;
         }
+
     }
 }
