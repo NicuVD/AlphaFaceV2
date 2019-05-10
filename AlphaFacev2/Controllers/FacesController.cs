@@ -386,6 +386,7 @@ namespace AlphaFacev2.Controllers
                     };
 
                     _context.Face.Add(faceComparison);
+                    _context.ImageStore.Remove(webcamImageStore); // ADDED!!!
                     await _context.SaveChangesAsync();
                 }
 
@@ -509,10 +510,34 @@ namespace AlphaFacev2.Controllers
                         if (!string.IsNullOrEmpty(filepath))
                         {
                             // Storing Image in Folder  
-                            StoreInFolder(file, filepath);
+                            //StoreInFolder(file, filepath);
                         }
 
-                        var imageBytes = System.IO.File.ReadAllBytes(filepath);
+                        //var imageBytes = System.IO.File.ReadAllBytes(filepath);
+
+                        // FILE TO BYTE for multiple files
+                        //foreach (var file in files)
+                        //{
+                        //    if (file.Length > 0)
+                        //    {
+                        //        using (var ms = new MemoryStream())
+                        //        {
+                        //            file.CopyTo(ms);
+                        //            var fileBytes = ms.ToArray();
+                        //            string s = Convert.ToBase64String(fileBytes);
+                        //            // act on the Base64 data
+                        //        }
+                        //    }
+                        //}
+
+                        byte[] imageBytes = new byte[0];
+
+                        using (var ms = new MemoryStream())
+                        {
+                            file.CopyTo(ms);
+                            imageBytes = ms.ToArray();
+                        }
+
                         if (imageBytes != null)
                         {
                             // Storing Image in Folder  
