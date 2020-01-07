@@ -308,6 +308,22 @@ namespace AlphaFacev2.Controllers
 
         }
 
+
+        private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, string ipAddress, bool isUserLogedIn)
+        {
+            History historyEntry = new History
+            {
+                Username = user.Email,
+                Password = user.Password,
+                LoginTime = loginTime,
+                IsActionSuccess = loginSucces,
+                IpAddress = ipAddress.ToString(),
+                IsUserLoggedIn = isUserLogedIn
+            };
+
+            return historyEntry;
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -442,20 +458,6 @@ namespace AlphaFacev2.Controllers
             return RedirectToAction("LoginAFace");
         }
 
-        private static History LogHistory(Profile user, DateTime loginTime, bool loginSucces, string ipAddress, bool isUserLogedIn)
-        {
-            History historyEntry = new History
-            {
-                Username = user.Email,
-                Password = user.Password,
-                LoginTime = loginTime,
-                IsActionSuccess = loginSucces,
-                IpAddress = ipAddress.ToString(),
-                IsUserLoggedIn = isUserLogedIn
-            };
-
-            return historyEntry;
-        }
 
         //public IActionResult Welcome()
         //{
@@ -535,6 +537,8 @@ namespace AlphaFacev2.Controllers
             return await _cognitiveServices.VerifyAsync(userImage, uploadedImage);
         }
 
+
+
         public async Task<IActionResult> UpdateProfilePicture()
         {
             var lastLogin = _context.History.Last(l => l.IsActionSuccess == true);
@@ -553,6 +557,8 @@ namespace AlphaFacev2.Controllers
             StatusMessage = "Your profile picture has been updated";
             return RedirectToAction("Index", "Profiles");
         }
+
+
 
         public static string GetIpAdress()
         {

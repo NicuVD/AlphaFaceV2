@@ -20,6 +20,7 @@ namespace AlphaFacev2.Services
         {
             using (var client = new HttpClient())
             {
+                // Request Headers
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
                 var uri = uriBase + "detect?returnFaceId=true";
 
@@ -30,7 +31,7 @@ namespace AlphaFacev2.Services
                 var result1 = await response1.Content.ReadAsStringAsync();
                 var face1 = JsonConvert.DeserializeObject<IList<DetectedFace>>(result1);
                 string faceId1 = null;
-                if (face1.Count != 0)
+                if (face1.Count != 0) //(face1.Count != 0 && face1.Count <= 1)
                 {
                     faceId1 = face1.FirstOrDefault().FaceId.ToString();
                 }
